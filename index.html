@@ -46,7 +46,7 @@
 
         body {
             font-family: var(--font-body);
-            background: var(--green-main);
+            background: var(--green-main) url('assets/img/achtergrond.jpg') center/cover fixed;
             color: var(--light);
             overflow-x: hidden;
             line-height: 1.7;
@@ -185,7 +185,7 @@
         }
 
         /* ===== ABOUT ===== */
-        .about { background: linear-gradient(180deg, var(--green-main) 0%, #4e9470 50%, #529872 100%); }
+        .about { background: linear-gradient(180deg, rgba(78,148,112,0.4) 0%, rgba(70,138,100,0.5) 50%, rgba(78,148,112,0.3) 100%); }
         .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
         .about-image-wrap { position: relative; border-radius: 16px; overflow: hidden; }
         .about-image-wrap img { width: 100%; aspect-ratio: 4/5; object-fit: cover; transition: transform 0.6s; }
@@ -201,7 +201,7 @@
         }
 
         /* ===== WHEEL ===== */
-        .wheel-section { background: linear-gradient(180deg, #529872 0%, #4a8e68 50%, #508f6e 100%); text-align: center; position: relative; overflow: hidden; }
+        .wheel-section { background: linear-gradient(180deg, rgba(60,120,85,0.5) 0%, rgba(50,110,75,0.6) 50%, rgba(60,120,85,0.4) 100%); text-align: center; position: relative; overflow: hidden; }
         .wheel-section h2 { font-family: var(--font-heading); font-size: clamp(2rem,4vw,3.2rem); font-weight: 400; margin-bottom: 8px; }
         .wheel-subtitle { font-family: var(--font-accent); color: var(--teal-light); font-size: 0.95rem; margin-bottom: 48px; }
         .wheel-stage { position: relative; width: min(500px, 85vw); height: min(500px, 85vw); margin: 0 auto 40px; cursor: grab; touch-action: none; }
@@ -273,7 +273,7 @@
         }
 
         /* ===== PHOTOS ===== */
-        .photos-section { background: linear-gradient(180deg, #508f6e 0%, #5a9e78 50%, #559a74 100%); padding: 100px 0; overflow: hidden; }
+        .photos-section { background: linear-gradient(180deg, rgba(70,135,100,0.3) 0%, rgba(80,148,110,0.2) 50%, rgba(70,135,100,0.35) 100%); padding: 100px 0; overflow: hidden; }
         .photos-section h2 { font-family: var(--font-heading); font-size: clamp(2rem,4vw,3.2rem); font-weight: 400; text-align: center; margin-bottom: 8px; padding: 0 24px; }
         .photos-subtitle { font-family: var(--font-accent); color: var(--neon-pink); text-align: center; font-size: 0.95rem; margin-bottom: 48px; }
         .photo-strip { display: flex; gap: 20px; padding: 0 24px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; cursor: grab; }
@@ -287,7 +287,7 @@
         .photo-card:hover::after { border-color: var(--gold); box-shadow: 0 0 30px rgba(245,197,24,0.15); }
 
         /* ===== INFO ===== */
-        .info-section { background: linear-gradient(180deg, #559a74 0%, #4e9470 50%, #488e6a 100%); }
+        .info-section { background: linear-gradient(180deg, rgba(55,115,80,0.5) 0%, rgba(48,105,72,0.55) 50%, rgba(55,115,80,0.45) 100%); }
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
         .prescription {
             background: #faf8f0; color: #1a1a1a; border-radius: 4px; padding: 40px;
@@ -558,112 +558,45 @@
         resizeBg();
         window.addEventListener('resize', resizeBg);
 
-        // ===== BACKGROUND: Wavy blobs + confetti (like DOKTER_ACHTERGROND.jpg) =====
+        // ===== BACKGROUND: Floating medical icons + extra confetti on top of the bg image =====
         const confettiDots = [];
         const totalHeight = () => document.documentElement.scrollHeight;
 
-        // Wavy blob definitions - organic shapes that drift slowly
-        const blobs = [];
-        function initBlobs() {
-            blobs.length = 0;
-            const w = bgCanvas.width, h = window.innerHeight;
-            // Create 5-6 large organic blobs across the viewport
-            for (let i = 0; i < 6; i++) {
-                blobs.push({
-                    cx: Math.random() * w,
-                    cy: Math.random() * h,
-                    radius: 200 + Math.random() * 300,
-                    color: `rgba(128, 200, 160, ${0.3 + Math.random() * 0.25})`, // lighter green blob
-                    noiseOffset: Math.random() * 1000,
-                    driftX: (Math.random() - 0.5) * 0.15,
-                    driftY: (Math.random() - 0.5) * 0.1,
-                    wobbleSpeed: 0.003 + Math.random() * 0.004,
-                    points: 8 + Math.floor(Math.random() * 4), // organic shape complexity
-                });
-            }
-        }
-
-        // Confetti colors matching the reference image: olive, gray-green, dark green, yellow-green
+        // Extra floating confetti that moves on top of the static bg image
         const confettiColors = [
-            'rgba(138,154,74,',    // olive/yellow-green
-            'rgba(168,184,160,',   // silver-gray-green
+            'rgba(138,154,74,',    // olive
+            'rgba(168,184,160,',   // silver-gray
             'rgba(58,106,74,',     // dark green
-            'rgba(100,130,80,',    // muted green
             'rgba(180,190,100,',   // yellow-olive
-            'rgba(80,120,90,',     // forest green
+            'rgba(245,197,24,',    // gold/yellow
+            'rgba(255,255,255,',   // white
         ];
 
         function initConfetti() {
             confettiDots.length = 0;
             const h = totalHeight();
-            for (let i = 0; i < 120; i++) {
+            for (let i = 0; i < 80; i++) {
                 confettiDots.push({
                     x: Math.random() * bgCanvas.width,
                     y: Math.random() * h,
-                    w: 8 + Math.random() * 18,
+                    w: 8 + Math.random() * 16,
                     h: 3 + Math.random() * 6,
                     rotation: Math.random() * Math.PI * 2,
                     rotSpeed: (Math.random() - 0.5) * 0.002,
                     driftX: (Math.random() - 0.5) * 0.08,
-                    driftY: -0.02 - Math.random() * 0.06,
+                    driftY: -0.02 - Math.random() * 0.05,
                     color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
-                    opacity: 0.5 + Math.random() * 0.4,
+                    opacity: 0.3 + Math.random() * 0.4,
                 });
             }
         }
 
-        initBlobs();
         initConfetti();
-
-        // Simple noise function for organic blob shapes
-        let blobTime = 0;
-        function pseudoNoise(x) { return Math.sin(x * 1.3) * 0.5 + Math.sin(x * 2.7) * 0.3 + Math.cos(x * 0.9) * 0.2; }
-
-        function drawBlob(ctx, blob) {
-            ctx.save();
-            ctx.fillStyle = blob.color;
-            ctx.beginPath();
-            const pts = blob.points;
-            for (let i = 0; i <= pts; i++) {
-                const angle = (i / pts) * Math.PI * 2;
-                const noiseVal = pseudoNoise(angle * 3 + blob.noiseOffset + blobTime * blob.wobbleSpeed);
-                const r = blob.radius * (0.7 + noiseVal * 0.4);
-                const x = blob.cx + Math.cos(angle) * r;
-                const y = blob.cy + Math.sin(angle) * r;
-                if (i === 0) ctx.moveTo(x, y);
-                else {
-                    // Use quadratic curve for smoother shape
-                    const prevAngle = ((i - 0.5) / pts) * Math.PI * 2;
-                    const prevNoise = pseudoNoise(prevAngle * 3 + blob.noiseOffset + blobTime * blob.wobbleSpeed);
-                    const cpR = blob.radius * (0.7 + prevNoise * 0.4);
-                    const cpx = blob.cx + Math.cos(prevAngle) * cpR;
-                    const cpy = blob.cy + Math.sin(prevAngle) * cpR;
-                    ctx.quadraticCurveTo(cpx, cpy, x, y);
-                }
-            }
-            ctx.closePath();
-            ctx.fill();
-            ctx.restore();
-        }
 
         function animateBg() {
             bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
             const scrollY = window.scrollY;
-            blobTime++;
 
-            // Draw wavy blobs
-            blobs.forEach(blob => {
-                blob.cx += blob.driftX;
-                blob.cy += blob.driftY;
-                // Wrap around
-                if (blob.cx < -blob.radius) blob.cx = bgCanvas.width + blob.radius;
-                if (blob.cx > bgCanvas.width + blob.radius) blob.cx = -blob.radius;
-                if (blob.cy < -blob.radius) blob.cy = bgCanvas.height + blob.radius;
-                if (blob.cy > bgCanvas.height + blob.radius) blob.cy = -blob.radius;
-                drawBlob(bgCtx, blob);
-            });
-
-            // Draw confetti rectangles
             confettiDots.forEach(c => {
                 c.rotation += c.rotSpeed;
                 c.x += c.driftX;
