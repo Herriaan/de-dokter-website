@@ -717,11 +717,11 @@
             'Rocketshot 4x',             // 22
             'Draai Nog Een Keer!',       // 23
         ];
-        // The first boundary (between seg 23 and seg 0) sits at ~1° CW from 12 o'clock.
+        // The first boundary (between seg 23 and seg 0) sits at ~-2° (=358°) from 12 o'clock.
         // BOUNDARY_START shifts the coordinate system so 0° = first boundary.
         // SEGMENT_ENDS[i] = cumulative width from BOUNDARY_START. Last entry = 360.
-        // Calibrated from high-res polar unwrap of wheel image (12 mrt 2026).
-        const BOUNDARY_START = 1;
+        // Calibrated from zoomed overlay analysis on source image (12 mrt 2026).
+        const BOUNDARY_START = -2;
         const SEGMENT_ENDS = [
         //  cumul  width  actual°
              14, //  14°   → 15°   Dutch Drop 8x
