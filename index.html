@@ -211,7 +211,7 @@
         }
 
         /* ===== WHEEL ===== */
-        .wheel-section { background: rgba(12,40,28,0.78); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); text-align: center; position: relative; overflow: hidden; }
+        .wheel-section { background: rgba(12,40,28,0.82); text-align: center; position: relative; overflow: hidden; }
         .wheel-section h2 { font-family: var(--font-heading); font-size: clamp(2rem,4vw,3.2rem); font-weight: 400; margin-bottom: 8px; text-shadow: 2px 2px 0 rgba(245,197,24,0.2); }
         .wheel-subtitle { font-family: var(--font-accent); color: var(--teal-light); font-size: 0.95rem; margin-bottom: 48px; }
         .wheel-stage { position: relative; width: min(500px, 85vw); height: min(500px, 85vw); margin: 0 auto 40px; cursor: grab; touch-action: none; }
@@ -333,7 +333,7 @@
         }
 
         /* ===== INFO ===== */
-        .info-section { background: rgba(12,40,28,0.78); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+        .info-section { background: rgba(12,40,28,0.82); }
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
         .prescription {
             background: #faf8f0; color: #1a1a1a; border-radius: 4px; padding: 40px;
@@ -840,7 +840,7 @@
             // Pointer wobble effect near segment boundaries
             const pointer = document.querySelector('.wheel-pointer');
             const rawN = ((currentAngle % 360) + 360) % 360;
-            const pPos = ((360 - rawN) % 360 + 360) % 360;
+            const pPos = ((360 - rawN + 5) % 360 + 360) % 360;
             const nearBoundary = SEGMENT_ENDS.some(b => {
                 const dist = Math.min(Math.abs(pPos - b), 360 - Math.abs(pPos - b));
                 return dist < 3;
@@ -868,7 +868,8 @@
             // After CW rotation of X degrees, the segment at the pointer
             // was originally at (360 - X) degrees CW from top on the image
             const rawNorm = ((currentAngle % 360) + 360) % 360;
-            const pointerPos = ((360 - rawNorm) % 360 + 360) % 360;
+            const CALIBRATION = 5; // offset for actual 12-o'clock start position
+            const pointerPos = ((360 - rawNorm + CALIBRATION) % 360 + 360) % 360;
             // Find segment using actual boundary angles (unequal segment widths)
             let idx = 0;
             for (let i = 0; i < SEGMENT_ENDS.length; i++) {
