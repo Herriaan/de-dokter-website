@@ -996,6 +996,35 @@
             quipTimeout = setTimeout(() => mascotteBubble.classList.remove('show'), 3500);
         });
 
+        // ===== DEBUG: Wheel boundary overlay (activate with ?debug in URL) =====
+        if (location.search.includes('debug')) {
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('viewBox', '0 0 100 100');
+            svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:50;';
+            SEGMENT_ENDS.forEach((endAngle, i) => {
+                const rad = (endAngle - 90) * Math.PI / 180;
+                const x2 = 50 + 50 * Math.cos(rad);
+                const y2 = 50 + 50 * Math.sin(rad);
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', '50'); line.setAttribute('y1', '50');
+                line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+                line.setAttribute('stroke', 'red'); line.setAttribute('stroke-width', '0.5');
+                line.setAttribute('opacity', '0.8');
+                svg.appendChild(line);
+                // Label
+                const lx = 50 + 38 * Math.cos(rad);
+                const ly = 50 + 38 * Math.sin(rad);
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', lx); text.setAttribute('y', ly);
+                text.setAttribute('fill', 'red'); text.setAttribute('font-size', '2.5');
+                text.setAttribute('text-anchor', 'middle'); text.setAttribute('dominant-baseline', 'middle');
+                text.textContent = endAngle + '°';
+                svg.appendChild(text);
+            });
+            wheelStage.querySelector('.wheel-img-wrap').appendChild(svg);
+            console.log('Debug overlay active. SEGMENT_ENDS:', SEGMENT_ENDS);
+        }
+
         // ===== ACTIVE NAV =====
         const secs = document.querySelectorAll('section[id]');
         window.addEventListener('scroll', () => {
