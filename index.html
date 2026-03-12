@@ -24,13 +24,13 @@
             --neon-purple: #8b5cf6;
             --gold: #f5c518;
             --gold-dim: #c9a615;
-            --dark: #071a17;
-            --dark-surface: #0a201c;
-            --dark-card: #0f2a25;
+            --dark: #0c3b2e;
+            --dark-surface: #104a38;
+            --dark-card: #155a42;
             --green-mid: #2d8a6e;
             --green-bg: #1a6b56;
             --light: #f0efe9;
-            --light-dim: #a0b5ad;
+            --light-dim: #c0d5cd;
             --font-heading: 'Luckiest Guy', cursive;
             --font-logo: 'Luckiest Guy', cursive;
             --font-body: 'DM Sans', sans-serif;
@@ -71,21 +71,21 @@
         }
 
         .glow-orb {
-            position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.15;
+            position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.25;
         }
 
-        .glow-orb--1 { width: 600px; height: 600px; background: #1a8a7d; animation: orbDrift1 30s ease-in-out infinite; }
-        .glow-orb--2 { width: 500px; height: 500px; background: #2d8a6e; animation: orbDrift2 25s ease-in-out infinite; }
-        .glow-orb--3 { width: 450px; height: 450px; background: #0e9e7a; animation: orbDrift3 35s ease-in-out infinite; }
-        .glow-orb--4 { width: 400px; height: 400px; background: #3aaa8a; animation: orbDrift4 28s ease-in-out infinite; }
+        .glow-orb--1 { width: 600px; height: 600px; background: #2aaa8d; animation: orbDrift1 30s ease-in-out infinite; }
+        .glow-orb--2 { width: 500px; height: 500px; background: #4dbb6e; animation: orbDrift2 25s ease-in-out infinite; }
+        .glow-orb--3 { width: 450px; height: 450px; background: #1ec07a; animation: orbDrift3 35s ease-in-out infinite; }
+        .glow-orb--4 { width: 400px; height: 400px; background: #5acc9a; animation: orbDrift4 28s ease-in-out infinite; }
 
         @keyframes orbDrift1 { 0%,100%{top:-10%;left:-10%} 25%{top:20%;left:50%} 50%{top:60%;left:30%} 75%{top:40%;left:5%} }
         @keyframes orbDrift2 { 0%,100%{top:50%;right:-10%} 33%{top:10%;right:30%} 66%{top:70%;right:50%} }
         @keyframes orbDrift3 { 0%,100%{bottom:-5%;left:20%} 50%{bottom:50%;left:65%} }
         @keyframes orbDrift4 { 0%,100%{top:30%;right:5%} 33%{top:70%;right:40%} 66%{top:10%;right:60%} }
 
-        /* Section styling */
-        .section-bg { position: relative; overflow: hidden; }
+        /* Section styling - no hard edges, all backgrounds via the fixed canvas */
+        .section-bg { position: relative; overflow: hidden; background: transparent; }
         .section-bg > * { position: relative; z-index: 2; }
 
         /* ===== NAVIGATION ===== */
@@ -95,7 +95,7 @@
             transition: all 0.4s ease; transform: translateY(-100%);
         }
         .nav.visible {
-            transform: translateY(0); background: rgba(7, 26, 23, 0.9);
+            transform: translateY(0); background: rgba(12, 59, 46, 0.9);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(26, 138, 125, 0.2);
         }
@@ -128,7 +128,7 @@
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background:
                 radial-gradient(ellipse at 50% 40%, rgba(26, 138, 125, 0.2) 0%, transparent 50%),
-                linear-gradient(to bottom, rgba(7,26,23,0.3) 0%, rgba(7,26,23,0) 30%, rgba(7,26,23,0.5) 70%, rgba(7,26,23,1) 100%);
+                linear-gradient(to bottom, rgba(12,59,46,0.3) 0%, rgba(12,59,46,0) 30%, rgba(12,59,46,0.5) 70%, rgba(12,59,46,1) 100%);
         }
         .hero-content { position: relative; z-index: 2; text-align: center; padding: 0 24px; }
         .hero-logo {
@@ -198,7 +198,7 @@
         }
 
         /* ===== ABOUT ===== */
-        .about { background: linear-gradient(180deg, var(--dark) 0%, #0c2620 50%, #0e2a23 100%); }
+        .about { background: transparent; }
         .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
         .about-image-wrap { position: relative; border-radius: 16px; overflow: hidden; }
         .about-image-wrap img { width: 100%; aspect-ratio: 4/5; object-fit: cover; transition: transform 0.6s; }
@@ -214,10 +214,11 @@
         }
 
         /* ===== WHEEL ===== */
-        .wheel-section { background: linear-gradient(180deg, #0e2a23 0%, #0a1f1b 50%, #0c2420 100%); text-align: center; position: relative; overflow: hidden; }
+        .wheel-section { background: transparent; text-align: center; position: relative; overflow: hidden; }
         .wheel-section h2 { font-family: var(--font-heading); font-size: clamp(2rem,4vw,3.2rem); font-weight: 400; margin-bottom: 8px; }
         .wheel-subtitle { font-family: var(--font-accent); color: var(--teal-light); font-size: 0.95rem; margin-bottom: 48px; }
-        .wheel-stage { position: relative; width: min(500px, 85vw); height: min(500px, 85vw); margin: 0 auto 40px; }
+        .wheel-stage { position: relative; width: min(500px, 85vw); height: min(500px, 85vw); margin: 0 auto 40px; cursor: grab; touch-action: none; }
+        .wheel-stage:active { cursor: grabbing; }
         .wheel-pointer {
             position: absolute; top: -18px; left: 50%; transform: translateX(-50%); z-index: 10;
             width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent;
@@ -231,12 +232,12 @@
         .wheel-glow {
             position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--teal-light);
             opacity: 0.5; box-shadow: 0 0 30px var(--teal-glow), inset 0 0 30px var(--teal-glow);
-            animation: pulseGlow 3s ease-in-out infinite;
+            animation: pulseGlow 3s ease-in-out infinite; pointer-events: none;
         }
         .wheel-center {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
             width: 50px; height: 50px; background: radial-gradient(circle, var(--gold) 40%, var(--gold-dim) 100%);
-            border-radius: 50%; z-index: 5; box-shadow: 0 0 20px rgba(245,197,24,0.4);
+            border-radius: 50%; z-index: 5; box-shadow: 0 0 20px rgba(245,197,24,0.4); pointer-events: none;
         }
         .spin-btn {
             font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.3rem; letter-spacing: 3px;
@@ -285,7 +286,7 @@
         }
 
         /* ===== PHOTOS ===== */
-        .photos-section { background: linear-gradient(180deg, #0c2420 0%, #0e2a23 50%, #0a201c 100%); padding: 100px 0; overflow: hidden; }
+        .photos-section { background: transparent; padding: 100px 0; overflow: hidden; }
         .photos-section h2 { font-family: var(--font-heading); font-size: clamp(2rem,4vw,3.2rem); font-weight: 400; text-align: center; margin-bottom: 8px; padding: 0 24px; }
         .photos-subtitle { font-family: var(--font-accent); color: var(--neon-pink); text-align: center; font-size: 0.95rem; margin-bottom: 48px; }
         .photo-strip { display: flex; gap: 20px; padding: 0 24px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; cursor: grab; }
@@ -299,7 +300,7 @@
         .photo-card:hover::after { border-color: var(--gold); box-shadow: 0 0 30px rgba(245,197,24,0.15); }
 
         /* ===== INFO ===== */
-        .info-section { background: linear-gradient(180deg, #0a201c 0%, #0c2420 50%, #081c18 100%); }
+        .info-section { background: transparent; }
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
         .prescription {
             background: #faf8f0; color: #1a1a1a; border-radius: 4px; padding: 40px;
@@ -365,7 +366,7 @@
             .nav-mobile-btn { display: flex; }
             .nav-links.mobile-open {
                 display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0;
-                background: rgba(7,26,23,0.95); backdrop-filter: blur(20px); padding: 24px; gap: 20px;
+                background: rgba(12,59,46,0.95); backdrop-filter: blur(20px); padding: 24px; gap: 20px;
                 border-bottom: 1px solid rgba(26,138,125,0.2);
             }
             .about-grid { grid-template-columns: 1fr; gap: 40px; }
@@ -502,7 +503,7 @@
         <div class="section-pad">
             <div class="info-grid">
                 <div class="info-text reveal">
-                    <p class="info-label">Openingstijden</p>
+                    <p class="info-label">Spreekuur</p>
                     <h2>Wanneer is de dokter in?</h2>
                     <p>Elke week houdt De Dokter spreekuur voor iedereen die een recept nodig heeft voor een onvergetelijke avond. Geen afspraak nodig, gewoon binnenlopen.</p>
                     <div class="highlight-box">
@@ -942,11 +943,12 @@
         }
 
         function showPrize() {
-            // norm = how many degrees the wheel has rotated CW
-            // The segment originally at 'norm' degrees CW from top is now at the pointer
-            const norm = (((currentAngle % 360) + 360) % 360 + SEGMENT_OFFSET) % 360;
+            // After CW rotation of X degrees, the segment at the pointer
+            // was originally at (360 - X) degrees CW from top on the image
+            const rawNorm = ((currentAngle % 360) + 360) % 360;
+            const pointerPos = ((360 - rawNorm + SEGMENT_OFFSET) % 360 + 360) % 360;
             const seg = 360 / prizes.length;
-            const idx = Math.floor(norm / seg) % prizes.length;
+            const idx = Math.floor(pointerPos / seg) % prizes.length;
             const prize = prizes[idx];
 
             resultPrize.textContent = '';
@@ -964,13 +966,13 @@
             setTimeout(typeChar, 300);
         }
 
-        // Mouse events on wheel
-        wheelImg.addEventListener('mousedown', onDragStart);
+        // Mouse events on wheel (use wheelStage as target for larger hit area)
+        wheelStage.addEventListener('mousedown', onDragStart);
         window.addEventListener('mousemove', onDragMove);
         window.addEventListener('mouseup', onDragEnd);
 
         // Touch events on wheel
-        wheelImg.addEventListener('touchstart', onDragStart, { passive: false });
+        wheelStage.addEventListener('touchstart', onDragStart, { passive: false });
         window.addEventListener('touchmove', onDragMove, { passive: false });
         window.addEventListener('touchend', onDragEnd);
 
