@@ -1,5 +1,19 @@
 # Changelog - Feestcafe De Dokter Website
 
+## v9 - 2026-03-12
+- Design polish op basis van frontend-design review
+- Donkere secties: hoger contrast (0.78 opacity) + backdrop-filter blur
+- Medische SVG illustraties op donkere secties (bloedzak, spuit, pil, stethoscoop, hart, thermometer, infuus)
+- Medische illustraties zichtbaarder (0.07 → 0.15 opacity)
+- Gouden text-shadow op alle sectie-kopjes
+- Foto galerij: Polaroid-stijl met rotaties, witte rand en handgeschreven bijschriften
+- Gevarieerde scroll-reveal animaties (links, rechts, scale-up) ipv uniform fadeUp
+- About foto: scheef met rand en schaduw (Polaroid-effect)
+- Mascotte klikbaar: toont random dokters-quips in speech bubble
+- Wheel mapping: SEGMENT_OFFSET 0 → 7.5 (half segment correctie)
+- Footer: gouden social hover, speelse tagline, Spreekuur ipv Openingstijden
+- Social link hover: goud ipv teal
+
 ## v5 - 2026-03-12
 - Confetti nu multi-color (roze, geel, blauw, paars, oranje, groen, wit, rood) - 350 stuks
 - Medische iconen in meerdere kleuren (teal, roze, goud, paars)

@@ -157,15 +157,15 @@
         .drip-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 10px var(--teal-glow); position: absolute; left: -2.5px; animation: drip 2s ease-in-out infinite; }
 
         /* ===== HEARTBEAT DIVIDER ===== */
-        .heartbeat-divider { width: 100%; padding: 0 24px; height: 40px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; background: transparent; }
-        .heartbeat-divider svg { width: min(600px, 80%); height: 30px; opacity: 0.5; }
-        .heartbeat-divider path { fill: none; stroke: rgba(255,255,255,0.6); stroke-width: 2; filter: drop-shadow(0 0 6px rgba(255,255,255,0.2)); stroke-dasharray: 800; stroke-dashoffset: 800; }
-        .heartbeat-divider.animated path { animation: drawHeartbeat 2s ease forwards; }
+        .heartbeat-divider { width: 100%; padding: 0 24px; height: 60px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; background: transparent; margin: 20px 0; }
+        .heartbeat-divider svg { width: min(600px, 80%); height: 30px; opacity: 0.7; }
+        .heartbeat-divider path { fill: none; stroke: var(--gold); stroke-width: 2; filter: drop-shadow(0 0 8px rgba(245,197,24,0.3)); stroke-dasharray: 800; stroke-dashoffset: 800; }
+        .heartbeat-divider.animated path { animation: drawHeartbeatLoop 10s ease infinite; }
 
         /* ===== MASCOTTE ===== */
         .mascotte-float {
             position: fixed; bottom: 20px; right: 20px; z-index: 100;
-            width: 120px; pointer-events: none;
+            width: 120px; pointer-events: auto; cursor: pointer;
             animation: mascotteFloat 4s ease-in-out infinite;
             filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
         }
@@ -187,12 +187,18 @@
         /* ===== ABOUT ===== */
         .about { background: transparent; /* volle achtergrond zichtbaar */ }
         .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-        .about-image-wrap { position: relative; border-radius: 16px; overflow: hidden; }
+        .about-image-wrap {
+            position: relative; border-radius: 4px; overflow: hidden;
+            box-shadow: 6px 8px 24px rgba(0,0,0,0.35); border: 8px solid rgba(255,255,255,0.12);
+            opacity: 0; transform: rotate(-2deg) translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .about-image-wrap.revealed { opacity: 1; transform: rotate(-2deg); }
         .about-image-wrap img { width: 100%; aspect-ratio: 4/5; object-fit: cover; transition: transform 0.6s; }
-        .about-image-wrap:hover img { transform: scale(1.03); }
-        .about-image-wrap::after { content:''; position: absolute; inset: 0; border-radius: 16px; border: 1px solid rgba(26,138,125,0.3); pointer-events: none; }
+        .about-image-wrap:hover img { transform: scale(1.05); }
+        .about-image-wrap::after { content:''; position: absolute; inset: 0; border-radius: 2px; border: 1px solid rgba(245,197,24,0.2); pointer-events: none; }
         .about-label { font-family: var(--font-accent); color: var(--gold); font-size: 0.95rem; margin-bottom: 12px; }
-        .about h2 { font-family: var(--font-heading); font-size: clamp(2rem,4vw,3.2rem); font-weight: 400; line-height: 1.1; margin-bottom: 24px; }
+        .about h2 { font-family: var(--font-heading); font-size: clamp(2rem,4vw,3.2rem); font-weight: 400; line-height: 1.1; margin-bottom: 24px; text-shadow: 2px 2px 0 rgba(245,197,24,0.2); }
         .about p { color: var(--light-dim); font-size: 1.05rem; margin-bottom: 16px; }
         .about p strong { color: var(--light); }
         .about-mascotte-inline {
@@ -201,8 +207,8 @@
         }
 
         /* ===== WHEEL ===== */
-        .wheel-section { background: rgba(20,60,40,0.55); text-align: center; position: relative; overflow: hidden; }
-        .wheel-section h2 { font-family: var(--font-heading); font-size: clamp(2rem,4vw,3.2rem); font-weight: 400; margin-bottom: 8px; }
+        .wheel-section { background: rgba(12,40,28,0.78); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); text-align: center; position: relative; overflow: hidden; }
+        .wheel-section h2 { font-family: var(--font-heading); font-size: clamp(2rem,4vw,3.2rem); font-weight: 400; margin-bottom: 8px; text-shadow: 2px 2px 0 rgba(245,197,24,0.2); }
         .wheel-subtitle { font-family: var(--font-accent); color: var(--teal-light); font-size: 0.95rem; margin-bottom: 48px; }
         .wheel-stage { position: relative; width: min(500px, 85vw); height: min(500px, 85vw); margin: 0 auto 40px; cursor: grab; touch-action: none; }
         .wheel-stage:active { cursor: grabbing; }
@@ -272,22 +278,58 @@
             opacity: 0.3; pointer-events: none; z-index: 0; animation: pulseGlow 4s ease-in-out infinite;
         }
 
+        /* ===== MEDICAL DECORATIONS ===== */
+        .medical-deco {
+            position: absolute; pointer-events: none; z-index: 1;
+            color: rgba(255,255,255,0.15);
+            animation: medFloat var(--dur, 8s) ease-in-out var(--delay, 0s) infinite;
+        }
+        .medical-deco svg { width: 100%; height: 100%; }
+        @keyframes medFloat {
+            0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+            50% { transform: translateY(-14px) rotate(calc(var(--rot, 0deg) + 4deg)); }
+        }
+
+        /* ===== MASCOTTE SPEECH BUBBLE ===== */
+        .mascotte-bubble {
+            position: absolute; bottom: 100%; right: 0; width: 230px;
+            background: #faf8f0; color: #1a1a1a;
+            font-family: var(--font-handwriting); font-size: 1.05rem; font-weight: 700;
+            padding: 14px 18px; border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+            opacity: 0; transform: scale(0.7) translateY(10px);
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none; margin-bottom: 10px;
+        }
+        .mascotte-bubble.show { opacity: 1; transform: scale(1) translateY(0); }
+        .mascotte-bubble::after {
+            content: ''; position: absolute; bottom: -8px; right: 24px;
+            border-left: 8px solid transparent; border-right: 8px solid transparent;
+            border-top: 10px solid #faf8f0;
+        }
+
         /* ===== PHOTOS ===== */
-        .photos-section { background: transparent; /* volle achtergrond zichtbaar */ padding: 100px 0; overflow: hidden; }
-        .photos-section h2 { font-family: var(--font-heading); font-size: clamp(2rem,4vw,3.2rem); font-weight: 400; text-align: center; margin-bottom: 8px; padding: 0 24px; }
-        .photos-subtitle { font-family: var(--font-accent); color: var(--neon-pink); text-align: center; font-size: 0.95rem; margin-bottom: 48px; }
-        .photo-strip { display: flex; gap: 20px; padding: 0 24px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; cursor: grab; }
+        .photos-section { background: transparent; /* volle achtergrond zichtbaar */ padding: 100px 0 120px; overflow: visible; }
+        .photos-section h2 { font-family: var(--font-heading); font-size: clamp(2rem,4vw,3.2rem); font-weight: 400; text-align: center; margin-bottom: 8px; padding: 0 24px; text-shadow: 2px 2px 0 rgba(245,197,24,0.2); }
+        .photos-subtitle { font-family: var(--font-accent); color: var(--gold); text-align: center; font-size: 0.95rem; margin-bottom: 48px; }
+        .photo-strip { display: flex; gap: 14px; padding: 20px 24px 40px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; cursor: grab; align-items: center; }
         .photo-strip::-webkit-scrollbar { display: none; }
         .photo-strip:active { cursor: grabbing; }
-        .photo-card { flex: 0 0 auto; width: 320px; aspect-ratio: 3/4; border-radius: 16px; overflow: hidden; position: relative; scroll-snap-align: center; transition: transform 0.4s; }
-        .photo-card:hover { transform: translateY(-8px); }
-        .photo-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
-        .photo-card:hover img { transform: scale(1.08); }
-        .photo-card::after { content:''; position: absolute; inset: 0; border-radius: 16px; border: 1px solid transparent; transition: all 0.4s; }
-        .photo-card:hover::after { border-color: var(--gold); box-shadow: 0 0 30px rgba(245,197,24,0.15); }
+        .photo-card {
+            flex: 0 0 auto; width: 270px; background: #faf8f0; padding: 10px 10px 44px;
+            border-radius: 3px; position: relative; scroll-snap-align: center;
+            box-shadow: 4px 6px 18px rgba(0,0,0,0.3); transition: transform 0.4s, box-shadow 0.4s;
+            transform: rotate(var(--r, 0deg));
+        }
+        .photo-card:hover { transform: rotate(var(--r, 0deg)) translateY(-8px) scale(1.03); box-shadow: 6px 10px 30px rgba(0,0,0,0.4); z-index: 3; }
+        .photo-card img { width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: 2px; }
+        .photo-card::after {
+            content: attr(data-caption); position: absolute; bottom: 12px; left: 0; right: 0;
+            text-align: center; font-family: var(--font-handwriting); font-size: 1.1rem; color: #777;
+        }
 
         /* ===== INFO ===== */
-        .info-section { background: rgba(20,60,40,0.55); /* donkerdere band */ }
+        .info-section { background: rgba(12,40,28,0.78); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
         .prescription {
             background: #faf8f0; color: #1a1a1a; border-radius: 4px; padding: 40px;
@@ -303,12 +345,28 @@
         .hours-list .day { color: #555; }
         .hours-list .time { color: var(--teal); font-weight: 700; }
         .hours-list .closed { color: #aaa; }
-        .info-text h2 { font-family: var(--font-heading); font-size: clamp(2rem,4vw,3.2rem); font-weight: 400; margin-bottom: 8px; }
+        .info-text h2 { font-family: var(--font-heading); font-size: clamp(2rem,4vw,3.2rem); font-weight: 400; margin-bottom: 8px; text-shadow: 2px 2px 0 rgba(245,197,24,0.2); }
         .info-label { font-family: var(--font-accent); color: var(--gold); font-size: 0.95rem; margin-bottom: 32px; }
         .info-text p { color: var(--light-dim); font-size: 1.05rem; margin-bottom: 16px; }
-        .highlight-box { background: rgba(0,0,0,0.15); border-left: 3px solid var(--gold); padding: 20px 24px; border-radius: 0 12px 12px 0; margin-top: 24px; }
-        .highlight-box h4 { font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--gold); margin-bottom: 8px; }
+        .highlight-box {
+            position: relative; padding: 28px 28px; border-radius: 16px;
+            margin-top: 32px; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;
+            background: rgba(12,40,28,0.85); overflow: hidden; z-index: 1;
+        }
+        .highlight-box::before {
+            content: ''; position: absolute; inset: -2px; z-index: -2;
+            background: conic-gradient(from var(--border-angle, 0deg), var(--gold), var(--teal-light), var(--neon-pink), var(--gold));
+            border-radius: 18px; animation: spinBorder 4s linear infinite;
+        }
+        .highlight-box::after {
+            content: ''; position: absolute; inset: 2px; z-index: -1;
+            background: rgba(12,40,28,0.92); border-radius: 14px;
+        }
+        .highlight-box:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(245,197,24,0.2); }
+        .highlight-box h4 { font-family: var(--font-heading); font-weight: 400; color: var(--gold); margin-bottom: 8px; font-size: 1.2rem; }
         .highlight-box p { color: var(--light-dim); font-size: 0.95rem; margin: 0; }
+        @property --border-angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+        @keyframes spinBorder { to { --border-angle: 360deg; } }
 
         /* ===== FOOTER ===== */
         .footer { background: #2a5e42; border-top: 1px solid rgba(255,255,255,0.1); position: relative; z-index: 2; }
@@ -325,7 +383,7 @@
             border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center;
             color: var(--light-dim); transition: all 0.3s;
         }
-        .social-link:hover { background: var(--teal); color: #fff; border-color: var(--teal); box-shadow: 0 0 20px var(--teal-glow); }
+        .social-link:hover { background: var(--gold); color: var(--dark); border-color: var(--gold); box-shadow: 0 0 20px rgba(245,197,24,0.4); }
         .footer-bottom { text-align: center; padding-top: 40px; margin-top: 60px; border-top: 1px solid rgba(26,138,125,0.08); color: var(--light-dim); font-size: 0.85rem; }
 
         /* ===== ANIMATIONS ===== */
@@ -339,6 +397,7 @@
         @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
         @keyframes drip { 0%{top:0;opacity:0} 20%{opacity:1} 80%{opacity:1} 100%{top:54px;opacity:0} }
         @keyframes drawHeartbeat { to{stroke-dashoffset:0} }
+        @keyframes drawHeartbeatLoop { 0%{stroke-dashoffset:800} 20%{stroke-dashoffset:0} 80%{stroke-dashoffset:0} 100%{stroke-dashoffset:800} }
         @keyframes pulseGlow { 0%,100%{opacity:.25} 50%{opacity:.5} }
 
         .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease, transform 0.8s ease; }
@@ -346,6 +405,11 @@
         .reveal-delay-1 { transition-delay: 0.1s; }
         .reveal-delay-2 { transition-delay: 0.2s; }
         .reveal-delay-3 { transition-delay: 0.3s; }
+
+        .reveal-left { opacity: 0; transform: translateX(-50px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .reveal-right { opacity: 0; transform: translateX(50px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .reveal-scale { opacity: 0; transform: scale(0.88); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .reveal-left.revealed, .reveal-right.revealed, .reveal-scale.revealed { opacity: 1; transform: none; }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 900px) {
@@ -359,7 +423,7 @@
             .about-grid { grid-template-columns: 1fr; gap: 40px; }
             .info-grid { grid-template-columns: 1fr; }
             .footer-grid { grid-template-columns: 1fr; gap: 40px; }
-            .photo-card { width: 260px; }
+            .photo-card { width: 240px; padding: 8px 8px 36px; }
             .prescription { transform: rotate(0); }
             .mascotte-float { width: 80px; bottom: 10px; right: 10px; }
         }
@@ -377,10 +441,11 @@
     <canvas id="confetti-canvas" aria-hidden="true"></canvas>
 
     <!-- FLOATING MASCOTTE -->
-    <div class="mascotte-float" aria-hidden="true">
+    <div class="mascotte-float" role="button" tabindex="0" aria-label="Klik voor een doktersadvies" id="mascotteBtn">
         <div class="mascotte-container">
             <div class="mascotte-drip"></div>
-            <img src="assets/img/mascotte.png" alt="" width="120">
+            <img src="assets/img/mascotte.png" alt="De Dokter mascotte" width="120">
+            <div class="mascotte-bubble" id="mascotteBubble"></div>
         </div>
     </div>
 
@@ -421,10 +486,10 @@
     <section class="about section-bg" id="about">
         <div class="section-pad">
             <div class="about-grid">
-                <div class="about-image-wrap reveal">
+                <div class="about-image-wrap" data-reveal>
                     <img src="assets/img/foto-buitenkant.jpg" alt="Feestcafe De Dokter buitenkant" loading="lazy">
                 </div>
-                <div class="reveal reveal-delay-1">
+                <div class="reveal-right">
                     <p class="about-label">Wie zijn wij?</p>
                     <h2>Het meest besmettelijke feestcafe</h2>
                     <p><strong>Feestcafe De Dokter</strong> is al jaren het adres voor iedereen die toe is aan een flinke dosis feest. Ons team van ervaren "specialisten" staat klaar om je de ultieme behandeling te geven.</p>
@@ -439,10 +504,29 @@
 
     <!-- WHEEL -->
     <section class="wheel-section section-bg" id="wheel">
+        <!-- Medical illustrations background -->
+        <div class="medical-deco" style="top:8%;left:4%;width:55px;--rot:-15deg;--dur:7s">
+            <svg viewBox="0 0 40 60" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="5" y="15" width="30" height="35" rx="3"/><path d="M15 15V8h10v7M20 8V2M20 50v8"/><line x1="13" y1="28" x2="27" y2="28"/><line x1="20" y1="22" x2="20" y2="34"/></svg>
+        </div>
+        <div class="medical-deco" style="top:55%;right:6%;width:50px;--rot:22deg;--dur:9s;--delay:1s">
+            <svg viewBox="0 0 50 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="12" y="2" width="26" height="12" rx="2"/><path d="M0 8h12M38 8h12"/><line x1="19" y1="5" x2="19" y2="11"/><line x1="25" y1="5" x2="25" y2="11"/><line x1="31" y1="5" x2="31" y2="11"/></svg>
+        </div>
+        <div class="medical-deco" style="top:20%;right:3%;width:42px;--rot:30deg;--dur:8s;--delay:2s">
+            <svg viewBox="0 0 40 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="3" width="36" height="14" rx="7"/><line x1="20" y1="3" x2="20" y2="17"/></svg>
+        </div>
+        <div class="medical-deco" style="bottom:12%;left:6%;width:50px;--rot:-25deg;--dur:6s;--delay:0.5s">
+            <svg viewBox="0 0 40 50" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 5v20c0 10 20 10 20 0V5"/><circle cx="20" cy="40" r="6"/><circle cx="20" cy="40" r="2" fill="currentColor"/></svg>
+        </div>
+        <div class="medical-deco" style="top:72%;left:2%;width:35px;--rot:10deg;--dur:10s;--delay:3s">
+            <svg viewBox="0 0 30 28" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 26S2 18 2 10a7 7 0 0 1 13-3.5A7 7 0 0 1 28 10c0 8-13 16-13 16z"/></svg>
+        </div>
+        <div class="medical-deco" style="top:40%;right:2%;width:30px;--rot:-5deg;--dur:7s;--delay:1.5s">
+            <svg viewBox="0 0 16 50" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="2" width="10" height="32" rx="5"/><circle cx="8" cy="42" r="6"/><line x1="8" y1="16" x2="8" y2="34"/></svg>
+        </div>
         <div class="section-pad" style="z-index:2">
             <h2 class="reveal">Het Rad van Fortuin</h2>
             <p class="wheel-subtitle reveal reveal-delay-1">Wat schrijft De Dokter voor?</p>
-            <div class="wheel-stage reveal reveal-delay-2">
+            <div class="wheel-stage reveal-scale reveal-delay-2">
                 <div class="wheel-pointer"></div>
                 <div class="wheel-img-wrap"><img src="assets/img/draairad.png" alt="Rad van Fortuin" class="wheel-img" id="wheelImg" draggable="false"><div class="wheel-glow"></div></div>
                 <div class="wheel-center"></div>
@@ -466,14 +550,14 @@
         <h2 class="reveal">Sfeerbeelden</h2>
         <p class="photos-subtitle reveal reveal-delay-1">Bekijk de bijwerkingen</p>
         <div class="photo-strip" id="photoStrip">
-            <div class="photo-card"><img src="assets/img/foto-feest.jpg" alt="Feest" loading="lazy"></div>
-            <div class="photo-card"><img src="assets/img/foto-confetti.jpg" alt="Confetti" loading="lazy"></div>
-            <div class="photo-card"><img src="assets/img/foto-flugel.jpg" alt="Flugel" loading="lazy"></div>
-            <div class="photo-card"><img src="assets/img/foto-mascotte-live.jpg" alt="Mascotte" loading="lazy"></div>
-            <div class="photo-card"><img src="assets/img/foto-bar.jpg" alt="Bar" loading="lazy"></div>
-            <div class="photo-card"><img src="assets/img/foto-team.jpg" alt="Team" loading="lazy"></div>
-            <div class="photo-card"><img src="assets/img/foto-rad.jpg" alt="Rad" loading="lazy"></div>
-            <div class="photo-card"><img src="assets/img/foto-flugel2.jpg" alt="Flugel" loading="lazy"></div>
+            <div class="photo-card" style="--r:-2deg" data-caption="Feest!"><img src="assets/img/foto-feest.jpg" alt="Feest" loading="lazy"></div>
+            <div class="photo-card" style="--r:1.5deg" data-caption="Confetti regen"><img src="assets/img/foto-confetti.jpg" alt="Confetti" loading="lazy"></div>
+            <div class="photo-card" style="--r:-1deg" data-caption="Flugel time"><img src="assets/img/foto-flugel.jpg" alt="Flugel" loading="lazy"></div>
+            <div class="photo-card" style="--r:2.5deg" data-caption="De Dokter!"><img src="assets/img/foto-mascotte-live.jpg" alt="Mascotte" loading="lazy"></div>
+            <div class="photo-card" style="--r:-1.5deg" data-caption="Aan de bar"><img src="assets/img/foto-bar.jpg" alt="Bar" loading="lazy"></div>
+            <div class="photo-card" style="--r:1deg" data-caption="Het team"><img src="assets/img/foto-team.jpg" alt="Team" loading="lazy"></div>
+            <div class="photo-card" style="--r:-2.5deg" data-caption="Het Rad!"><img src="assets/img/foto-rad.jpg" alt="Rad" loading="lazy"></div>
+            <div class="photo-card" style="--r:2deg" data-caption="Proost!"><img src="assets/img/foto-flugel2.jpg" alt="Flugel" loading="lazy"></div>
         </div>
     </section>
 
@@ -481,22 +565,38 @@
 
     <!-- INFO -->
     <section class="info-section section-bg" id="info">
+        <!-- Medical illustrations background -->
+        <div class="medical-deco" style="top:12%;right:4%;width:50px;--rot:12deg;--dur:8s">
+            <svg viewBox="0 0 30 70" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="5" y="2" width="20" height="28" rx="2"/><path d="M15 30v15"/><circle cx="15" cy="50" r="3"/><path d="M15 53v10M10 63h10"/></svg>
+        </div>
+        <div class="medical-deco" style="top:50%;left:2%;width:45px;--rot:-18deg;--dur:7s;--delay:1.5s">
+            <svg viewBox="0 0 50 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="12" y="2" width="26" height="12" rx="2"/><path d="M0 8h12M38 8h12"/><line x1="19" y1="5" x2="19" y2="11"/><line x1="25" y1="5" x2="25" y2="11"/><line x1="31" y1="5" x2="31" y2="11"/></svg>
+        </div>
+        <div class="medical-deco" style="bottom:15%;right:5%;width:38px;--rot:28deg;--dur:9s;--delay:2s">
+            <svg viewBox="0 0 30 28" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 26S2 18 2 10a7 7 0 0 1 13-3.5A7 7 0 0 1 28 10c0 8-13 16-13 16z"/></svg>
+        </div>
+        <div class="medical-deco" style="top:28%;left:5%;width:55px;--rot:-8deg;--dur:6s;--delay:0.5s">
+            <svg viewBox="0 0 40 60" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="5" y="15" width="30" height="35" rx="3"/><path d="M15 15V8h10v7M20 8V2M20 50v8"/><line x1="13" y1="28" x2="27" y2="28"/><line x1="20" y1="22" x2="20" y2="34"/></svg>
+        </div>
+        <div class="medical-deco" style="bottom:8%;left:45%;width:42px;--rot:35deg;--dur:8s;--delay:3s">
+            <svg viewBox="0 0 40 50" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 5v20c0 10 20 10 20 0V5"/><circle cx="20" cy="40" r="6"/><circle cx="20" cy="40" r="2" fill="currentColor"/></svg>
+        </div>
         <div class="section-pad">
             <div class="info-grid">
-                <div class="info-text reveal">
+                <div class="info-text reveal-left">
                     <p class="info-label">Spreekuur</p>
-                    <h2>Wanneer is de dokter in?</h2>
+                    <h2>Wanneer heeft De Dokter spreekuur?</h2>
                     <p>Elke week houdt De Dokter spreekuur voor iedereen die een recept nodig heeft voor een onvergetelijke avond. Geen afspraak nodig, gewoon binnenlopen.</p>
                     <div class="highlight-box">
                         <h4>Prive feest? Bel de Dokter!</h4>
                         <p>Wil je De Dokter afhuren voor een prive feest, vrijgezellenfeest of bedrijfsuitje? Neem contact met ons op en we schrijven een behandelplan op maat voor.</p>
                     </div>
                 </div>
-                <div class="reveal reveal-delay-2">
+                <div class="reveal-right reveal-delay-2">
                     <div class="prescription">
                         <div class="prescription-header">
                             <img src="assets/img/mascotte-klein.png" alt="">
-                            <h3>Feestcafe De Dokter<br><small style="font-weight:400;color:#888">Officieel Receptblok</small></h3>
+                            <h3>Feestcafe De Dokter<br><small style="font-weight:400;color:#888">Spreekuur</small></h3>
                         </div>
                         <ul class="hours-list">
                             <li><span class="day">Maandag</span><span class="closed">Gesloten</span></li>
@@ -521,10 +621,10 @@
                 <div class="footer-brand">
                     <img src="assets/img/logo.png" alt="Feestcafe De Dokter">
                     <p>Het meest besmettelijke feestcafe. Al jaren het recept voor onvergetelijke avonden.</p>
+                    <p style="font-family:var(--font-handwriting);color:var(--gold);font-size:1.15rem;margin-top:8px">Heb je klachten? Kom langs!</p>
                     <div class="social-links">
-                        <a href="#" class="social-link" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
-                        <a href="#" class="social-link" aria-label="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-                        <a href="#" class="social-link" aria-label="TikTok"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.16 15a6.34 6.34 0 0 0 6.33 6.33 6.34 6.34 0 0 0 6.33-6.33V8.72a8.19 8.19 0 0 0 4.77 1.52V6.79a4.85 4.85 0 0 1-1-.1z"/></svg></a>
+                        <a href="https://www.instagram.com/dedokterbreda/" target="_blank" rel="noopener" class="social-link" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+                        <a href="https://www.facebook.com/p/De-Dokter-Breda-61566404210336/" target="_blank" rel="noopener" class="social-link" aria-label="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
                     </div>
                 </div>
                 <div>
@@ -533,7 +633,7 @@
                         <li><a href="#about">Over De Dokter</a></li>
                         <li><a href="#wheel">Het Rad</a></li>
                         <li><a href="#photos">Sfeerbeelden</a></li>
-                        <li><a href="#info">Openingstijden</a></li>
+                        <li><a href="#info">Spreekuur</a></li>
                     </ul>
                 </div>
                 <div>
@@ -554,7 +654,7 @@
         const bgCanvas = document.getElementById('bg-canvas');
         const bgCtx = bgCanvas.getContext('2d');
 
-        function resizeBg() { bgCanvas.width = window.innerWidth; bgCanvas.height = document.documentElement.scrollHeight; }
+        function resizeBg() { bgCanvas.width = window.innerWidth; bgCanvas.height = window.innerHeight; }
         resizeBg();
         window.addEventListener('resize', resizeBg);
 
@@ -634,7 +734,7 @@
         const revealObs = new IntersectionObserver(entries => {
             entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('revealed', 'animated'); });
         }, { threshold: 0.15 });
-        document.querySelectorAll('.reveal, [data-reveal]').forEach(el => revealObs.observe(el));
+        document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale, [data-reveal]').forEach(el => revealObs.observe(el));
 
         // ===== WHEEL SPIN (Physics-based drag) =====
         const wheelImg = document.getElementById('wheelImg');
@@ -655,10 +755,10 @@
         const MIN_VELOCITY = 0.15;   // stop threshold (degrees/frame)
 
         // Segments in CLOCKWISE order starting from 12 o'clock on the unrotated wheel image.
-        // Adjust SEGMENT_OFFSET (degrees) if the first boundary isn't exactly at 12 o'clock.
-        const SEGMENT_OFFSET = 0;
+        // Segments have UNEQUAL widths - mapped from the actual wheel design.
+        // SEGMENT_ENDS[i] = cumulative end angle (degrees CW from 12 o'clock) of segment i.
         const prizes = [
-            'Dutch Drop 8x',            // 0  - top
+            'Dutch Drop 8x',            // 0  - starts at 0°
             'Zakje Chips',               // 1
             'Devilshot 6x',              // 2
             'Rocketshot 5x',             // 3
@@ -682,6 +782,34 @@
             'Boswandeling 9x',           // 21
             'Rocketshot 4x',             // 22
             'Draai Nog Een Keer!',       // 23
+        ];
+        // End angle of each segment (degrees CW from 12 o'clock).
+        // Measured from the actual wheel image - segments vary from ~11° to ~22° wide.
+        const SEGMENT_ENDS = [
+             13,  // 0: Dutch Drop 8x        (13° wide)
+             30,  // 1: Zakje Chips           (17°)
+             50,  // 2: Devilshot 6x          (20°)
+             64,  // 3: Rocketshot 5x         (14°)
+             77,  // 4: Chaudfontaine Blauw   (13°)
+             88,  // 5: Krokodil              (11°)
+            100,  // 6: Shot naar Keuze 4x    (12°)
+            114,  // 7: Flugel 4x             (14°)
+            136,  // 8: Rocketshot Sour 6x    (22°)
+            148,  // 9: Aptmeister 1x         (12°)
+            168,  // 10: Devilshot 5x         (20°)
+            185,  // 11: Boswandeling Pink 7x (17°)
+            199,  // 12: Dutch Drop 10x       (14°)
+            218,  // 13: Rocketshot XL        (19°)
+            232,  // 14: Opener De Dokter     (14°)
+            245,  // 15: Rocketshot           (13°)
+            258,  // 16: Rocketshot Pink      (13°)
+            276,  // 17: De Dokter Limoncello (18°)
+            290,  // 18: Flugel               (14°)
+            302,  // 19: Koekie 6x            (12°)
+            316,  // 20: Boswandeling 6x      (14°)
+            330,  // 21: Boswandeling 9x      (14°)
+            345,  // 22: Rocketshot 4x        (15°)
+            360,  // 23: Draai Nog Een Keer!  (15°)
         ];
 
         // Get angle from center of wheel to pointer position
@@ -776,9 +904,13 @@
 
             // Pointer wobble effect near segment boundaries
             const pointer = document.querySelector('.wheel-pointer');
-            const segAngle = 360 / prizes.length;
-            const normAngle = ((currentAngle % segAngle) + segAngle) % segAngle;
-            if (normAngle < 3 || normAngle > segAngle - 3) {
+            const rawN = ((currentAngle % 360) + 360) % 360;
+            const pPos = ((360 - rawN) % 360 + 360) % 360;
+            const nearBoundary = SEGMENT_ENDS.some(b => {
+                const dist = Math.min(Math.abs(pPos - b), 360 - Math.abs(pPos - b));
+                return dist < 3;
+            });
+            if (nearBoundary) {
                 pointer.style.transform = `translateX(-50%) rotate(${(Math.random() - 0.5) * 6}deg)`;
             } else {
                 pointer.style.transform = 'translateX(-50%)';
@@ -801,11 +933,16 @@
             // After CW rotation of X degrees, the segment at the pointer
             // was originally at (360 - X) degrees CW from top on the image
             const rawNorm = ((currentAngle % 360) + 360) % 360;
-            const pointerPos = ((360 - rawNorm + SEGMENT_OFFSET) % 360 + 360) % 360;
-            const seg = 360 / prizes.length;
-            const idx = Math.floor(pointerPos / seg) % prizes.length;
+            const pointerPos = ((360 - rawNorm) % 360 + 360) % 360;
+            // Find segment using actual boundary angles (unequal segment widths)
+            let idx = 0;
+            for (let i = 0; i < SEGMENT_ENDS.length; i++) {
+                if (pointerPos < SEGMENT_ENDS[i]) { idx = i; break; }
+            }
             const prize = prizes[idx];
-            console.log(`Wheel: angle=${rawNorm.toFixed(1)}° pointerPos=${pointerPos.toFixed(1)}° seg=${seg.toFixed(1)}° → idx=${idx} = "${prize}"`);
+            const segStart = idx === 0 ? 0 : SEGMENT_ENDS[idx - 1];
+            const segEnd = SEGMENT_ENDS[idx];
+            console.log(`Wheel: rot=${rawNorm.toFixed(1)}° ptr=${pointerPos.toFixed(1)}° → seg[${idx}] ${segStart}°-${segEnd}° = "${prize}"`);
 
             resultPrize.textContent = '';
             resultCard.classList.add('show');
@@ -890,6 +1027,38 @@
         ps.addEventListener('mouseleave', () => dragging=false);
         ps.addEventListener('mouseup', () => dragging=false);
         ps.addEventListener('mousemove', e => { if(!dragging)return; e.preventDefault(); ps.scrollLeft=sl-(e.pageX-ps.offsetLeft-sx)*1.5; });
+
+        // ===== MASCOTTE QUIPS =====
+        const mascotteBtn = document.getElementById('mascotteBtn');
+        const mascotteBubble = document.getElementById('mascotteBubble');
+        const dokterQuips = [
+            'De dokter schrijft voor: nog een rondje!',
+            'Dit recept is niet verzekerd!',
+            'Bijwerkingen? Alleen maar plezier!',
+            'Neem 2x Flugel en bel me morgenochtend',
+            'Deze behandeling dekt je zorgverzekering niet',
+            '1x per uur innemen, niet nuchter!',
+            'De wachtkamer is vol, direct doorlopen naar de bar!',
+            'Dosering: onbeperkt',
+            'Tijd voor je medicijn!',
+            'De dokter is ALTIJD in',
+            'Geen bijsluiter nodig',
+            'Recept: 1 biertje, 2 shotjes, herhalen tot het werkt',
+            'Uw klachten zijn ernstig. Ik schrijf een Jagerbomb voor.',
+            'De thermometer staat op FEEST!',
+            'Bel me niet morgen, ik heb zelf ook spreekuur gehad',
+            'Eenmaal per avond innemen. Of vaker. Ik ben geen echte dokter.',
+            'Wie heeft hier een shot nodig?!',
+            'De diagnose is duidelijk: te nuchter!',
+        ];
+        let quipTimeout = null;
+        mascotteBtn.addEventListener('click', () => {
+            const quip = dokterQuips[Math.floor(Math.random() * dokterQuips.length)];
+            mascotteBubble.textContent = quip;
+            mascotteBubble.classList.add('show');
+            clearTimeout(quipTimeout);
+            quipTimeout = setTimeout(() => mascotteBubble.classList.remove('show'), 3500);
+        });
 
         // ===== ACTIVE NAV =====
         const secs = document.querySelectorAll('section[id]');
