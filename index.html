@@ -678,7 +678,7 @@
         const resultCard = document.getElementById('resultCard');
         const resultPrize = document.getElementById('resultPrize');
 
-        let currentAngle = 0;       // current rotation in degrees
+        let currentAngle = Math.random() * 360; // random start so wheel looks different each visit
         let angularVelocity = 0;    // degrees per frame
         let isSpinning = false;      // physics animation running
         let isDragging = false;      // user is dragging
@@ -762,6 +762,7 @@
         function applyRotation() {
             wheelImg.style.transform = `rotate(${currentAngle}deg)`;
         }
+        applyRotation(); // apply random start rotation
 
         // Drag start
         function onDragStart(e) {
