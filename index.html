@@ -11,12 +11,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=Permanent+Marker&family=Luckiest+Guy&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
-        /* ===== RESET & VARIABLES ===== */
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
             --teal: #1a8a7d;
             --teal-light: #25b5a5;
+            --teal-deep: #0e5c53;
             --teal-glow: rgba(26, 138, 125, 0.4);
             --neon-pink: #ff2d7b;
             --neon-pink-glow: rgba(255, 45, 123, 0.4);
@@ -24,14 +24,18 @@
             --neon-purple: #8b5cf6;
             --gold: #f5c518;
             --gold-dim: #c9a615;
-            --dark: #0a0a12;
-            --dark-surface: #0f0f1a;
-            --dark-card: #161625;
+            --dark: #071a17;
+            --dark-surface: #0a201c;
+            --dark-card: #0f2a25;
+            --green-mid: #2d8a6e;
+            --green-bg: #1a6b56;
             --light: #f0efe9;
-            --light-dim: #8a8a80;
+            --light-dim: #a0b5ad;
             --font-heading: 'Outfit', sans-serif;
+            --font-logo: 'Luckiest Guy', cursive;
             --font-body: 'DM Sans', sans-serif;
             --font-accent: 'Permanent Marker', cursive;
+            --font-handwriting: 'Caveat', cursive;
         }
 
         html { scroll-behavior: smooth; }
@@ -48,1005 +52,304 @@
         a { color: var(--teal-light); text-decoration: none; transition: color 0.3s; }
         a:hover { color: var(--neon-pink); }
 
-        .section-pad {
-            padding: 100px 24px;
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 2;
-        }
+        .section-pad { padding: 100px 24px; max-width: 1200px; margin: 0 auto; position: relative; z-index: 2; }
 
-        /* ===== PERSISTENT BACKGROUND CANVASES ===== */
+        /* ===== BACKGROUND LAYERS ===== */
         #bg-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 1;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
         }
 
         #confetti-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 9999;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 9999;
         }
 
-        /* ===== FLOATING GLOW ORBS ===== */
         .glow-orbs {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
         }
 
         .glow-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.2;
+            position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.15;
         }
 
-        .glow-orb--pink {
-            width: 600px; height: 600px;
-            background: var(--neon-pink);
-            animation: orbDrift1 30s ease-in-out infinite;
-        }
+        .glow-orb--1 { width: 600px; height: 600px; background: #1a8a7d; animation: orbDrift1 30s ease-in-out infinite; }
+        .glow-orb--2 { width: 500px; height: 500px; background: #2d8a6e; animation: orbDrift2 25s ease-in-out infinite; }
+        .glow-orb--3 { width: 450px; height: 450px; background: #0e9e7a; animation: orbDrift3 35s ease-in-out infinite; }
+        .glow-orb--4 { width: 400px; height: 400px; background: #3aaa8a; animation: orbDrift4 28s ease-in-out infinite; }
 
-        .glow-orb--teal {
-            width: 500px; height: 500px;
-            background: var(--teal);
-            animation: orbDrift2 25s ease-in-out infinite;
-        }
+        @keyframes orbDrift1 { 0%,100%{top:-10%;left:-10%} 25%{top:20%;left:50%} 50%{top:60%;left:30%} 75%{top:40%;left:5%} }
+        @keyframes orbDrift2 { 0%,100%{top:50%;right:-10%} 33%{top:10%;right:30%} 66%{top:70%;right:50%} }
+        @keyframes orbDrift3 { 0%,100%{bottom:-5%;left:20%} 50%{bottom:50%;left:65%} }
+        @keyframes orbDrift4 { 0%,100%{top:30%;right:5%} 33%{top:70%;right:40%} 66%{top:10%;right:60%} }
 
-        .glow-orb--purple {
-            width: 450px; height: 450px;
-            background: var(--neon-purple);
-            animation: orbDrift3 35s ease-in-out infinite;
-        }
-
-        .glow-orb--gold {
-            width: 400px; height: 400px;
-            background: var(--gold);
-            animation: orbDrift4 28s ease-in-out infinite;
-        }
-
-        @keyframes orbDrift1 {
-            0%, 100% { top: -10%; left: -10%; }
-            25% { top: 20%; left: 50%; }
-            50% { top: 60%; left: 30%; }
-            75% { top: 40%; left: 5%; }
-        }
-
-        @keyframes orbDrift2 {
-            0%, 100% { top: 50%; right: -10%; }
-            33% { top: 10%; right: 30%; }
-            66% { top: 70%; right: 50%; }
-        }
-
-        @keyframes orbDrift3 {
-            0%, 100% { bottom: -5%; left: 20%; }
-            50% { bottom: 50%; left: 65%; }
-        }
-
-        @keyframes orbDrift4 {
-            0%, 100% { top: 30%; right: 5%; }
-            33% { top: 70%; right: 40%; }
-            66% { top: 10%; right: 60%; }
-        }
-
-        /* ===== SECTION BACKGROUNDS ===== */
-        .section-bg {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .section-bg::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
-        }
-
+        /* Section styling */
+        .section-bg { position: relative; overflow: hidden; }
         .section-bg > * { position: relative; z-index: 2; }
-
-        .bg-gradient-teal::before {
-            background: radial-gradient(ellipse at 20% 50%, rgba(26, 138, 125, 0.18) 0%, transparent 60%),
-                        radial-gradient(ellipse at 80% 80%, rgba(65, 105, 225, 0.08) 0%, transparent 50%);
-        }
-
-        .bg-gradient-pink::before {
-            background: radial-gradient(ellipse at 80% 30%, rgba(255, 45, 123, 0.14) 0%, transparent 50%),
-                        radial-gradient(ellipse at 20% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
-        }
-
-        .bg-gradient-gold::before {
-            background: radial-gradient(ellipse at 50% 20%, rgba(245, 197, 24, 0.12) 0%, transparent 50%),
-                        radial-gradient(ellipse at 80% 80%, rgba(26, 138, 125, 0.1) 0%, transparent 50%);
-        }
-
-        .bg-gradient-purple::before {
-            background: radial-gradient(ellipse at 30% 30%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                        radial-gradient(ellipse at 70% 70%, rgba(255, 45, 123, 0.1) 0%, transparent 50%);
-        }
-
-        /* Subtle noise texture overlay */
-        .noise-overlay::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            opacity: 0.03;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-            background-size: 256px;
-            pointer-events: none;
-            z-index: 1;
-        }
 
         /* ===== NAVIGATION ===== */
         .nav {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 1000;
-            padding: 16px 32px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: all 0.4s ease;
-            transform: translateY(-100%);
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
+            transition: all 0.4s ease; transform: translateY(-100%);
         }
-
         .nav.visible {
-            transform: translateY(0);
-            background: rgba(10, 10, 18, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(26, 138, 125, 0.15);
+            transform: translateY(0); background: rgba(7, 26, 23, 0.9);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(26, 138, 125, 0.2);
         }
-
-        .nav-logo { height: 40px; }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 32px;
-        }
-
+        .nav-logo { height: 40px; filter: drop-shadow(0 0 8px rgba(255,255,255,0.3)); }
+        .nav-links { display: flex; list-style: none; gap: 32px; }
         .nav-links a {
-            color: var(--light);
-            font-family: var(--font-heading);
-            font-weight: 600;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            position: relative;
-            padding-bottom: 4px;
+            color: var(--light); font-family: var(--font-heading); font-weight: 600;
+            font-size: 0.9rem; letter-spacing: 0.5px; text-transform: uppercase;
+            position: relative; padding-bottom: 4px;
         }
-
         .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0;
-            width: 0; height: 2px;
-            background: var(--neon-pink);
-            box-shadow: 0 0 8px var(--neon-pink-glow);
-            transition: width 0.3s ease;
+            content:''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px;
+            background: var(--gold); box-shadow: 0 0 8px rgba(245,197,24,0.4); transition: width 0.3s;
         }
-
-        .nav-links a:hover::after,
-        .nav-links a.active::after { width: 100%; }
-
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
         .nav-mobile-btn {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
+            display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px;
         }
-
-        .nav-mobile-btn span {
-            width: 24px; height: 2px;
-            background: var(--light);
-            transition: all 0.3s;
-        }
+        .nav-mobile-btn span { width: 24px; height: 2px; background: var(--light); transition: all 0.3s; }
 
         /* ===== HERO ===== */
         .hero {
-            position: relative;
-            height: 100vh;
-            min-height: 600px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
+            position: relative; height: 100vh; min-height: 600px;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
         }
-
         .hero-video {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            object-fit: cover;
-            opacity: 0.5;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.4;
         }
-
         .hero-overlay {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background:
-                radial-gradient(ellipse at 50% 40%, rgba(26, 138, 125, 0.15) 0%, transparent 50%),
-                linear-gradient(to bottom,
-                    rgba(10, 10, 18, 0.2) 0%,
-                    rgba(10, 10, 18, 0.0) 30%,
-                    rgba(10, 10, 18, 0.4) 70%,
-                    rgba(10, 10, 18, 1) 100%
-                );
+                radial-gradient(ellipse at 50% 40%, rgba(26, 138, 125, 0.2) 0%, transparent 50%),
+                linear-gradient(to bottom, rgba(7,26,23,0.3) 0%, rgba(7,26,23,0) 30%, rgba(7,26,23,0.5) 70%, rgba(7,26,23,1) 100%);
         }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            padding: 0 24px;
-        }
-
+        .hero-content { position: relative; z-index: 2; text-align: center; padding: 0 24px; }
         .hero-logo {
-            width: clamp(100px, 15vw, 160px);
-            margin: 0 auto 20px;
+            width: clamp(100px, 14vw, 150px); margin: 0 auto 16px;
             animation: floatSlow 6s ease-in-out infinite;
-            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.7))
-                    drop-shadow(0 0 50px rgba(26, 138, 125, 0.5));
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.6)) drop-shadow(0 0 40px rgba(26,138,125,0.4));
         }
-
-        .hero-title {
-            font-family: 'Luckiest Guy', cursive;
-            font-weight: 400;
-            margin-bottom: 8px;
-        }
-
+        .hero-title { font-family: var(--font-logo); font-weight: 400; margin-bottom: 8px; }
         .hero-title .line-feestcafe {
-            display: block;
-            font-size: clamp(1rem, 2.5vw, 1.5rem);
-            letter-spacing: 6px;
-            text-transform: uppercase;
-            color: var(--light);
-            margin-bottom: 0;
-            opacity: 0;
-            animation: fadeUp 0.8s ease 0.5s forwards;
+            display: block; font-size: clamp(1rem, 2.5vw, 1.4rem); letter-spacing: 6px;
+            text-transform: uppercase; color: var(--light); opacity: 0; animation: fadeUp 0.8s ease 0.5s forwards;
         }
-
         .hero-title .line-de-dokter {
-            display: block;
-            font-size: clamp(3rem, 9vw, 7rem);
-            color: #fff;
-            line-height: 0.95;
-            opacity: 0;
-            animation: neonFlicker 2.5s ease-in-out 0.8s forwards;
-            text-shadow:
-                0 0 10px #fff,
-                0 0 20px #fff,
-                0 0 40px var(--teal),
-                0 0 80px var(--teal),
-                0 0 100px var(--teal);
+            display: block; font-size: clamp(3rem, 9vw, 7rem); color: #fff; line-height: 0.95;
+            opacity: 0; animation: neonFlicker 2.5s ease-in-out 0.8s forwards;
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 40px var(--teal), 0 0 80px var(--teal), 0 0 100px var(--teal);
         }
-
         .hero-tagline {
-            font-family: var(--font-accent);
-            font-size: clamp(1.1rem, 3vw, 1.8rem);
-            color: var(--gold);
-            opacity: 0;
-            animation: fadeUp 1s ease 0.8s forwards;
-            text-shadow: 0 0 20px rgba(245, 197, 24, 0.3);
+            font-family: var(--font-accent); font-size: clamp(1.1rem, 3vw, 1.6rem);
+            color: var(--gold); opacity: 0; animation: fadeUp 1s ease 1.2s forwards;
+            text-shadow: 0 0 20px rgba(245,197,24,0.3);
         }
-
         .hero-cta {
-            display: inline-block;
-            margin-top: 32px;
-            font-family: var(--font-heading);
-            font-weight: 700;
-            font-size: 1rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: #fff;
-            background: transparent;
-            border: 2px solid var(--teal);
-            padding: 14px 40px;
-            border-radius: 60px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            opacity: 0;
-            animation: fadeUp 1s ease 1.2s forwards;
-            text-decoration: none;
+            display: inline-block; margin-top: 28px; font-family: var(--font-heading);
+            font-weight: 700; font-size: 1rem; letter-spacing: 2px; text-transform: uppercase;
+            color: var(--dark); background: var(--gold); border: none; padding: 14px 40px;
+            border-radius: 60px; cursor: pointer; transition: all 0.4s; text-decoration: none;
+            opacity: 0; animation: fadeUp 1s ease 1.5s forwards;
+            box-shadow: 0 0 20px rgba(245,197,24,0.3);
         }
-
-        .hero-cta:hover {
-            background: var(--teal);
-            color: #fff;
-            box-shadow: 0 0 30px var(--teal-glow);
-            transform: translateY(-2px);
-        }
-
+        .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(245,197,24,0.5); color: var(--dark); }
         .hero-scroll {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            opacity: 0;
-            animation: fadeUp 1s ease 2s forwards;
+            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 2;
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            opacity: 0; animation: fadeUp 1s ease 2s forwards;
         }
-
-        .hero-scroll span {
-            font-family: var(--font-heading);
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: var(--light-dim);
-        }
-
-        .drip-line {
-            width: 1px;
-            height: 60px;
-            background: linear-gradient(to bottom, var(--teal), transparent);
-            position: relative;
-        }
-
-        .drip-dot {
-            width: 6px; height: 6px;
-            border-radius: 50%;
-            background: var(--teal);
-            box-shadow: 0 0 10px var(--teal-glow);
-            position: absolute;
-            left: -2.5px;
-            animation: drip 2s ease-in-out infinite;
-        }
+        .hero-scroll span { font-family: var(--font-heading); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; color: var(--light-dim); }
+        .drip-line { width: 1px; height: 60px; background: linear-gradient(to bottom, var(--teal), transparent); position: relative; }
+        .drip-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 10px var(--teal-glow); position: absolute; left: -2.5px; animation: drip 2s ease-in-out infinite; }
 
         /* ===== HEARTBEAT DIVIDER ===== */
-        .heartbeat-divider {
-            width: 100%;
-            padding: 0 24px;
-            overflow: hidden;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            z-index: 2;
-        }
+        .heartbeat-divider { width: 100%; padding: 0 24px; height: 60px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; }
+        .heartbeat-divider svg { width: min(600px, 80%); height: 40px; }
+        .heartbeat-divider path { fill: none; stroke: var(--teal-light); stroke-width: 2; filter: drop-shadow(0 0 6px var(--teal-glow)); stroke-dasharray: 800; stroke-dashoffset: 800; }
+        .heartbeat-divider.animated path { animation: drawHeartbeat 2s ease forwards; }
 
-        .heartbeat-divider svg {
-            width: min(600px, 80%);
-            height: 40px;
+        /* ===== MASCOTTE ===== */
+        .mascotte-float {
+            position: fixed; bottom: 20px; right: 20px; z-index: 100;
+            width: 120px; pointer-events: none;
+            animation: mascotteFloat 4s ease-in-out infinite;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
         }
-
-        .heartbeat-divider path {
-            fill: none;
-            stroke: var(--teal);
-            stroke-width: 2;
-            filter: drop-shadow(0 0 6px var(--teal-glow));
-            stroke-dasharray: 800;
-            stroke-dashoffset: 800;
+        .mascotte-container { position: relative; }
+        .mascotte-drip {
+            position: absolute; top: -2px; right: 22px; width: 6px; height: 6px;
+            background: var(--gold); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: mascotteDrip 3s ease-in infinite;
+            box-shadow: 0 0 6px rgba(245,197,24,0.5);
         }
-
-        .heartbeat-divider.animated path {
-            animation: drawHeartbeat 2s ease forwards;
+        @keyframes mascotteFloat { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-10px) rotate(1deg)} }
+        @keyframes mascotteDrip {
+            0% { opacity: 0; transform: translateY(0) scale(0.5); }
+            10% { opacity: 1; transform: translateY(0) scale(1); }
+            60% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(40px) scale(0.3); }
         }
 
         /* ===== ABOUT ===== */
-        .about { background: linear-gradient(135deg, #0a1a1f 0%, #0f1520 50%, #0d1218 100%); }
-
-        .about-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: center;
-        }
-
-        .about-image-wrap {
-            position: relative;
-            border-radius: 16px;
-            overflow: hidden;
-        }
-
-        .about-image-wrap img {
-            width: 100%;
-            aspect-ratio: 4/5;
-            object-fit: cover;
-            transition: transform 0.6s ease;
-        }
-
+        .about { background: linear-gradient(180deg, var(--dark) 0%, #0c2620 50%, #0e2a23 100%); }
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+        .about-image-wrap { position: relative; border-radius: 16px; overflow: hidden; }
+        .about-image-wrap img { width: 100%; aspect-ratio: 4/5; object-fit: cover; transition: transform 0.6s; }
         .about-image-wrap:hover img { transform: scale(1.03); }
-
-        .about-image-wrap::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 16px;
-            border: 1px solid rgba(26, 138, 125, 0.2);
-            pointer-events: none;
-        }
-
-        .about-label {
-            font-family: var(--font-accent);
-            color: var(--teal-light);
-            font-size: 0.95rem;
-            margin-bottom: 12px;
-        }
-
-        .about h2 {
-            font-family: var(--font-heading);
-            font-size: clamp(2rem, 4vw, 3.2rem);
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 24px;
-        }
-
-        .about p {
-            color: var(--light-dim);
-            font-size: 1.05rem;
-            margin-bottom: 16px;
-        }
-
+        .about-image-wrap::after { content:''; position: absolute; inset: 0; border-radius: 16px; border: 1px solid rgba(26,138,125,0.3); pointer-events: none; }
+        .about-label { font-family: var(--font-accent); color: var(--gold); font-size: 0.95rem; margin-bottom: 12px; }
+        .about h2 { font-family: var(--font-heading); font-size: clamp(2rem,4vw,3.2rem); font-weight: 800; line-height: 1.1; margin-bottom: 24px; }
+        .about p { color: var(--light-dim); font-size: 1.05rem; margin-bottom: 16px; }
         .about p strong { color: var(--light); }
-
-        .about-mascotte {
-            position: absolute;
-            right: -30px;
-            bottom: -20px;
-            width: 140px;
-            opacity: 0.12;
-            transform: rotate(10deg);
-            pointer-events: none;
+        .about-mascotte-inline {
+            width: 200px; margin: 32px auto 0; animation: floatSlow 5s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(26,138,125,0.3));
         }
 
-        /* ===== WHEEL SECTION ===== */
-        .wheel-section {
-            background: linear-gradient(180deg, #0c0a1a 0%, #12101f 50%, #0c0a1a 100%);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .wheel-section h2 {
-            font-family: var(--font-heading);
-            font-size: clamp(2rem, 4vw, 3.2rem);
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        .wheel-subtitle {
-            font-family: var(--font-accent);
-            color: var(--teal-light);
-            font-size: 0.95rem;
-            margin-bottom: 48px;
-        }
-
-        .wheel-stage {
-            position: relative;
-            width: min(500px, 85vw);
-            height: min(500px, 85vw);
-            margin: 0 auto 40px;
-        }
-
+        /* ===== WHEEL ===== */
+        .wheel-section { background: linear-gradient(180deg, #0e2a23 0%, #0a1f1b 50%, #0c2420 100%); text-align: center; position: relative; overflow: hidden; }
+        .wheel-section h2 { font-family: var(--font-heading); font-size: clamp(2rem,4vw,3.2rem); font-weight: 800; margin-bottom: 8px; }
+        .wheel-subtitle { font-family: var(--font-accent); color: var(--teal-light); font-size: 0.95rem; margin-bottom: 48px; }
+        .wheel-stage { position: relative; width: min(500px, 85vw); height: min(500px, 85vw); margin: 0 auto 40px; }
         .wheel-pointer {
-            position: absolute;
-            top: -18px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            width: 0; height: 0;
-            border-left: 18px solid transparent;
-            border-right: 18px solid transparent;
-            border-top: 36px solid var(--gold);
-            filter: drop-shadow(0 0 12px rgba(245, 197, 24, 0.6));
+            position: absolute; top: -18px; left: 50%; transform: translateX(-50%); z-index: 10;
+            width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent;
+            border-top: 36px solid var(--gold); filter: drop-shadow(0 0 12px rgba(245,197,24,0.6));
         }
-
-        .wheel-pointer::after {
-            content: '';
-            position: absolute;
-            top: -42px;
-            left: -6px;
-            width: 12px; height: 12px;
-            background: var(--gold);
-            border-radius: 50%;
-        }
-
-        .wheel-img-wrap {
-            width: 100%; height: 100%;
-            border-radius: 50%;
-            position: relative;
-        }
-
-        .wheel-img {
-            width: 100%; height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            transition: none;
-        }
-
+        .wheel-pointer::after { content:''; position: absolute; top: -42px; left: -6px; width: 12px; height: 12px; background: var(--gold); border-radius: 50%; }
+        .wheel-img-wrap { width: 100%; height: 100%; border-radius: 50%; position: relative; }
+        .wheel-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
         .wheel-glow {
-            position: absolute;
-            inset: -4px;
-            border-radius: 50%;
-            border: 2px solid var(--teal);
-            opacity: 0.4;
-            box-shadow:
-                0 0 20px var(--teal-glow),
-                inset 0 0 20px var(--teal-glow);
+            position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--teal-light);
+            opacity: 0.5; box-shadow: 0 0 30px var(--teal-glow), inset 0 0 30px var(--teal-glow);
             animation: pulseGlow 3s ease-in-out infinite;
         }
-
         .wheel-center {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50px; height: 50px;
-            background: radial-gradient(circle, var(--gold) 40%, var(--gold-dim) 100%);
-            border-radius: 50%;
-            z-index: 5;
-            box-shadow: 0 0 20px rgba(245, 197, 24, 0.4);
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+            width: 50px; height: 50px; background: radial-gradient(circle, var(--gold) 40%, var(--gold-dim) 100%);
+            border-radius: 50%; z-index: 5; box-shadow: 0 0 20px rgba(245,197,24,0.4);
         }
-
         .spin-btn {
-            font-family: var(--font-heading);
-            font-weight: 800;
-            font-size: 1.3rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--dark);
-            background: var(--gold);
-            border: none;
-            padding: 16px 56px;
-            border-radius: 60px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 30px rgba(245, 197, 24, 0.3);
-            position: relative;
-            overflow: hidden;
+            font-family: var(--font-heading); font-weight: 800; font-size: 1.3rem; letter-spacing: 3px;
+            text-transform: uppercase; color: var(--dark); background: var(--gold); border: none;
+            padding: 16px 56px; border-radius: 60px; cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 0 30px rgba(245,197,24,0.3); position: relative; overflow: hidden;
         }
-
-        .spin-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 50px rgba(245, 197, 24, 0.5);
-        }
-
+        .spin-btn:hover { transform: scale(1.05); box-shadow: 0 0 50px rgba(245,197,24,0.5); }
         .spin-btn:active { transform: scale(0.97); }
-
-        .spin-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
+        .spin-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         .spin-btn::after {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: linear-gradient(
-                to bottom right,
-                transparent 40%,
-                rgba(255,255,255,0.3) 50%,
-                transparent 60%
-            );
-            transform: rotate(45deg) translateX(-100%);
-            transition: transform 0.6s;
+            content:''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(to bottom right, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%);
+            transform: rotate(45deg) translateX(-100%); transition: transform 0.6s;
         }
-
         .spin-btn:hover::after { transform: rotate(45deg) translateX(100%); }
+        .wheel-result { margin-top: 32px; min-height: 80px; display: flex; align-items: center; justify-content: center; }
 
-        .wheel-result {
-            margin-top: 32px;
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
+        /* Prescription result card */
         .result-card {
-            background: #faf8f0;
-            border-radius: 4px;
-            padding: 28px 36px 24px;
-            width: min(380px, 90vw);
-            opacity: 0;
+            background: #faf8f0; border-radius: 4px; padding: 28px 36px 24px;
+            width: min(380px, 90vw); opacity: 0;
             transform: scale(0.8) rotate(-2deg) translateY(20px);
             transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 4px 6px 0 rgba(0,0,0,0.2), 0 0 40px rgba(26, 138, 125, 0.2);
-            position: relative;
-            text-align: left;
+            box-shadow: 4px 6px 0 rgba(0,0,0,0.25), 0 0 40px rgba(26,138,125,0.15);
+            text-align: left; position: relative;
         }
-
-        .result-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 50px;
-            width: 1px; height: 100%;
-            background: rgba(200, 50, 50, 0.15);
-        }
-
-        .result-card.show {
-            opacity: 1;
-            transform: scale(1) rotate(-1deg) translateY(0);
-        }
-
-        .result-rx {
-            font-family: 'Luckiest Guy', cursive;
-            font-size: 1.8rem;
-            color: var(--teal);
-            margin-bottom: 4px;
-        }
-
-        .result-card .result-label {
-            font-family: 'Caveat', cursive;
-            font-size: 1rem;
-            color: #888;
-            margin-bottom: 2px;
-        }
-
+        .result-card::before { content:''; position: absolute; top: 0; left: 50px; width: 1px; height: 100%; background: rgba(200,50,50,0.15); }
+        .result-card.show { opacity: 1; transform: scale(1) rotate(-1deg) translateY(0); }
+        .result-rx { font-family: var(--font-logo); font-size: 1.8rem; color: var(--teal); margin-bottom: 4px; }
+        .result-card .result-label { font-family: var(--font-handwriting); font-size: 1rem; color: #888; margin-bottom: 2px; }
         .result-card .result-prize {
-            font-family: 'Caveat', cursive;
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            border-bottom: 2px solid var(--teal);
-            padding-bottom: 4px;
-            min-height: 2.8rem;
+            font-family: var(--font-handwriting); font-size: 2.2rem; font-weight: 700; color: #1a1a1a;
+            border-bottom: 2px solid var(--teal); padding-bottom: 4px; min-height: 2.8rem;
         }
-
-        .result-card .result-sig {
-            font-family: 'Caveat', cursive;
-            font-size: 1.1rem;
-            color: #aaa;
-            margin-top: 12px;
-            text-align: right;
-            font-style: italic;
-        }
-
-        .result-prize .cursor-blink {
-            display: inline-block;
-            width: 2px;
-            height: 1.8rem;
-            background: var(--teal);
-            margin-left: 2px;
-            animation: blink 0.6s step-end infinite;
-            vertical-align: middle;
-        }
-
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
+        .result-card .result-sig { font-family: var(--font-handwriting); font-size: 1.1rem; color: #aaa; margin-top: 12px; text-align: right; }
 
         .wheel-bg-glow {
-            position: absolute;
-            width: 700px; height: 700px;
-            border-radius: 50%;
+            position: absolute; width: 700px; height: 700px; border-radius: 50%;
             background: radial-gradient(circle, var(--teal-glow) 0%, transparent 70%);
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0.25;
-            pointer-events: none;
-            z-index: 0;
-            animation: pulseGlow 4s ease-in-out infinite;
+            top: 50%; left: 50%; transform: translate(-50%,-50%);
+            opacity: 0.3; pointer-events: none; z-index: 0; animation: pulseGlow 4s ease-in-out infinite;
         }
 
-        /* ===== PHOTOS SECTION ===== */
-        .photos-section {
-            background: linear-gradient(135deg, #120c18 0%, #0f0f1a 50%, #0c1218 100%);
-            padding: 100px 0;
-            overflow: hidden;
-        }
-
-        .photos-section h2 {
-            font-family: var(--font-heading);
-            font-size: clamp(2rem, 4vw, 3.2rem);
-            font-weight: 800;
-            text-align: center;
-            margin-bottom: 8px;
-            padding: 0 24px;
-        }
-
-        .photos-subtitle {
-            font-family: var(--font-accent);
-            color: var(--neon-pink);
-            text-align: center;
-            font-size: 0.95rem;
-            margin-bottom: 48px;
-        }
-
-        .photo-strip {
-            display: flex;
-            gap: 20px;
-            padding: 0 24px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none;
-            cursor: grab;
-        }
-
+        /* ===== PHOTOS ===== */
+        .photos-section { background: linear-gradient(180deg, #0c2420 0%, #0e2a23 50%, #0a201c 100%); padding: 100px 0; overflow: hidden; }
+        .photos-section h2 { font-family: var(--font-heading); font-size: clamp(2rem,4vw,3.2rem); font-weight: 800; text-align: center; margin-bottom: 8px; padding: 0 24px; }
+        .photos-subtitle { font-family: var(--font-accent); color: var(--neon-pink); text-align: center; font-size: 0.95rem; margin-bottom: 48px; }
+        .photo-strip { display: flex; gap: 20px; padding: 0 24px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; cursor: grab; }
         .photo-strip::-webkit-scrollbar { display: none; }
         .photo-strip:active { cursor: grabbing; }
-
-        .photo-card {
-            flex: 0 0 auto;
-            width: 320px;
-            aspect-ratio: 3/4;
-            border-radius: 16px;
-            overflow: hidden;
-            position: relative;
-            scroll-snap-align: center;
-            transition: transform 0.4s ease;
-        }
-
+        .photo-card { flex: 0 0 auto; width: 320px; aspect-ratio: 3/4; border-radius: 16px; overflow: hidden; position: relative; scroll-snap-align: center; transition: transform 0.4s; }
         .photo-card:hover { transform: translateY(-8px); }
-
-        .photo-card img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s ease;
-        }
-
+        .photo-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
         .photo-card:hover img { transform: scale(1.08); }
+        .photo-card::after { content:''; position: absolute; inset: 0; border-radius: 16px; border: 1px solid transparent; transition: all 0.4s; }
+        .photo-card:hover::after { border-color: var(--gold); box-shadow: 0 0 30px rgba(245,197,24,0.15); }
 
-        .photo-card::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 16px;
-            border: 1px solid transparent;
-            transition: all 0.4s;
-        }
-
-        .photo-card:hover::after {
-            border-color: var(--neon-pink);
-            box-shadow: 0 0 30px rgba(255, 45, 123, 0.15), inset 0 0 30px rgba(255, 45, 123, 0.05);
-        }
-
-        /* ===== INFO / SPREEKUUR ===== */
-        .info-section { background: linear-gradient(180deg, #0a0a12 0%, #0f1015 50%, #0a0c14 100%); }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 48px;
-        }
-
+        /* ===== INFO ===== */
+        .info-section { background: linear-gradient(180deg, #0a201c 0%, #0c2420 50%, #081c18 100%); }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
         .prescription {
-            background: #faf8f0;
-            color: #1a1a1a;
-            border-radius: 4px;
-            padding: 40px;
-            position: relative;
-            box-shadow: 4px 4px 0 rgba(0,0,0,0.15);
-            transform: rotate(-1deg);
+            background: #faf8f0; color: #1a1a1a; border-radius: 4px; padding: 40px;
+            position: relative; box-shadow: 4px 4px 0 rgba(0,0,0,0.2); transform: rotate(-1deg);
         }
-
-        .prescription::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 60px;
-            width: 1px; height: 100%;
-            background: rgba(200, 50, 50, 0.2);
-        }
-
-        .prescription-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 2px solid #e0ddd0;
-        }
-
+        .prescription::before { content:''; position: absolute; top: 0; left: 60px; width: 1px; height: 100%; background: rgba(200,50,50,0.2); }
+        .prescription-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #e0ddd0; }
         .prescription-header img { width: 48px; }
-
-        .prescription-header h3 {
-            font-family: var(--font-heading);
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: var(--teal);
-        }
-
-        .rx-symbol {
-            font-family: var(--font-accent);
-            font-size: 2rem;
-            color: var(--teal);
-            margin-bottom: 16px;
-        }
-
-        .hours-list {
-            list-style: none;
-            font-family: var(--font-accent);
-            font-size: 1rem;
-        }
-
-        .hours-list li {
-            padding: 8px 0;
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px dashed #d0cdc0;
-        }
-
+        .prescription-header h3 { font-family: var(--font-heading); font-weight: 700; font-size: 1.1rem; color: var(--teal); }
+        .rx-symbol { font-family: var(--font-accent); font-size: 2rem; color: var(--teal); margin-bottom: 16px; }
+        .hours-list { list-style: none; font-family: var(--font-accent); font-size: 1rem; }
+        .hours-list li { padding: 8px 0; display: flex; justify-content: space-between; border-bottom: 1px dashed #d0cdc0; }
         .hours-list .day { color: #555; }
         .hours-list .time { color: var(--teal); font-weight: 700; }
         .hours-list .closed { color: #aaa; }
-
-        .info-text h2 {
-            font-family: var(--font-heading);
-            font-size: clamp(2rem, 4vw, 3.2rem);
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        .info-label {
-            font-family: var(--font-accent);
-            color: var(--gold);
-            font-size: 0.95rem;
-            margin-bottom: 32px;
-        }
-
-        .info-text p {
-            color: var(--light-dim);
-            font-size: 1.05rem;
-            margin-bottom: 16px;
-        }
-
-        .highlight-box {
-            background: var(--dark-card);
-            border-left: 3px solid var(--neon-pink);
-            padding: 20px 24px;
-            border-radius: 0 12px 12px 0;
-            margin-top: 24px;
-        }
-
-        .highlight-box h4 {
-            font-family: var(--font-heading);
-            font-weight: 700;
-            color: var(--neon-pink);
-            margin-bottom: 8px;
-        }
-
+        .info-text h2 { font-family: var(--font-heading); font-size: clamp(2rem,4vw,3.2rem); font-weight: 800; margin-bottom: 8px; }
+        .info-label { font-family: var(--font-accent); color: var(--gold); font-size: 0.95rem; margin-bottom: 32px; }
+        .info-text p { color: var(--light-dim); font-size: 1.05rem; margin-bottom: 16px; }
+        .highlight-box { background: var(--dark-card); border-left: 3px solid var(--gold); padding: 20px 24px; border-radius: 0 12px 12px 0; margin-top: 24px; }
+        .highlight-box h4 { font-family: var(--font-heading); font-weight: 700; color: var(--gold); margin-bottom: 8px; }
         .highlight-box p { color: var(--light-dim); font-size: 0.95rem; margin: 0; }
 
         /* ===== FOOTER ===== */
-        .footer {
-            background: var(--dark-surface);
-            border-top: 1px solid rgba(26, 138, 125, 0.1);
-            position: relative;
-            z-index: 2;
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 1.5fr 1fr 1fr;
-            gap: 48px;
-        }
-
-        .footer-brand img { width: 120px; margin-bottom: 16px; }
-
-        .footer-brand p {
-            color: var(--light-dim);
-            font-size: 0.9rem;
-            max-width: 300px;
-        }
-
-        .footer h4 {
-            font-family: var(--font-heading);
-            font-weight: 700;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--teal-light);
-            margin-bottom: 20px;
-        }
-
-        .footer-links {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .footer-links a, .footer-links li {
-            color: var(--light-dim);
-            font-size: 0.95rem;
-        }
-
+        .footer { background: var(--dark); border-top: 1px solid rgba(26,138,125,0.15); position: relative; z-index: 2; }
+        .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 48px; }
+        .footer-brand img { width: 120px; margin-bottom: 16px; filter: drop-shadow(0 0 8px rgba(255,255,255,0.2)); }
+        .footer-brand p { color: var(--light-dim); font-size: 0.9rem; max-width: 300px; }
+        .footer h4 { font-family: var(--font-heading); font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; color: var(--teal-light); margin-bottom: 20px; }
+        .footer-links { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        .footer-links a, .footer-links li { color: var(--light-dim); font-size: 0.95rem; }
         .footer-links a:hover { color: var(--light); }
-
-        .social-links {
-            display: flex;
-            gap: 12px;
-            margin-top: 16px;
-        }
-
+        .social-links { display: flex; gap: 12px; margin-top: 16px; }
         .social-link {
-            width: 44px; height: 44px;
-            border-radius: 12px;
-            background: var(--dark-card);
-            border: 1px solid rgba(255,255,255,0.08);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--light-dim);
-            font-size: 1.2rem;
-            transition: all 0.3s;
+            width: 44px; height: 44px; border-radius: 12px; background: var(--dark-card);
+            border: 1px solid rgba(26,138,125,0.2); display: flex; align-items: center; justify-content: center;
+            color: var(--light-dim); transition: all 0.3s;
         }
-
-        .social-link:hover {
-            background: var(--teal);
-            color: #fff;
-            border-color: var(--teal);
-            box-shadow: 0 0 20px var(--teal-glow);
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 40px;
-            margin-top: 60px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            color: var(--light-dim);
-            font-size: 0.85rem;
-        }
+        .social-link:hover { background: var(--teal); color: #fff; border-color: var(--teal); box-shadow: 0 0 20px var(--teal-glow); }
+        .footer-bottom { text-align: center; padding-top: 40px; margin-top: 60px; border-top: 1px solid rgba(26,138,125,0.08); color: var(--light-dim); font-size: 0.85rem; }
 
         /* ===== ANIMATIONS ===== */
         @keyframes neonFlicker {
-            0% { opacity: 0; text-shadow: none; }
-            10% { opacity: 1; text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 42px var(--teal); }
-            11% { opacity: 0.7; text-shadow: none; }
-            12% { opacity: 1; text-shadow: 0 0 7px #fff, 0 0 42px var(--teal), 0 0 82px var(--teal); }
-            20% { opacity: 0.8; text-shadow: none; }
-            21% { opacity: 1; }
-            50% { text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px var(--teal), 0 0 82px var(--teal), 0 0 92px var(--teal); }
-            100% { opacity: 1; text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px var(--teal), 0 0 82px var(--teal), 0 0 92px var(--teal), 0 0 102px var(--teal), 0 0 151px var(--teal); }
+            0%{opacity:0;text-shadow:none} 10%{opacity:1;text-shadow:0 0 7px #fff,0 0 42px var(--teal)}
+            11%{opacity:.7;text-shadow:none} 12%{opacity:1;text-shadow:0 0 7px #fff,0 0 42px var(--teal),0 0 82px var(--teal)}
+            20%{opacity:.8;text-shadow:none} 21%{opacity:1}
+            100%{opacity:1;text-shadow:0 0 10px #fff,0 0 20px #fff,0 0 40px var(--teal),0 0 80px var(--teal),0 0 100px var(--teal)}
         }
+        @keyframes floatSlow { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes drip { 0%{top:0;opacity:0} 20%{opacity:1} 80%{opacity:1} 100%{top:54px;opacity:0} }
+        @keyframes drawHeartbeat { to{stroke-dashoffset:0} }
+        @keyframes pulseGlow { 0%,100%{opacity:.25} 50%{opacity:.5} }
 
-        @keyframes floatSlow {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-14px); }
-        }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(24px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes drip {
-            0% { top: 0; opacity: 0; }
-            20% { opacity: 1; }
-            80% { opacity: 1; }
-            100% { top: 54px; opacity: 0; }
-        }
-
-        @keyframes drawHeartbeat {
-            to { stroke-dashoffset: 0; }
-        }
-
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 0.25; }
-            50% { opacity: 0.5; }
-        }
-
-        /* ===== REVEAL ANIMATIONS ===== */
-        .reveal {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-        }
-
-        .reveal.revealed {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
+        .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .reveal.revealed { opacity: 1; transform: translateY(0); }
         .reveal-delay-1 { transition-delay: 0.1s; }
         .reveal-delay-2 { transition-delay: 0.2s; }
         .reveal-delay-3 { transition-delay: 0.3s; }
@@ -1055,50 +358,44 @@
         @media (max-width: 900px) {
             .nav-links { display: none; }
             .nav-mobile-btn { display: flex; }
-
             .nav-links.mobile-open {
-                display: flex;
-                flex-direction: column;
-                position: absolute;
-                top: 100%; left: 0; right: 0;
-                background: rgba(10, 10, 18, 0.95);
-                backdrop-filter: blur(20px);
-                padding: 24px;
-                gap: 20px;
-                border-bottom: 1px solid rgba(26, 138, 125, 0.15);
+                display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0;
+                background: rgba(7,26,23,0.95); backdrop-filter: blur(20px); padding: 24px; gap: 20px;
+                border-bottom: 1px solid rgba(26,138,125,0.2);
             }
-
             .about-grid { grid-template-columns: 1fr; gap: 40px; }
             .info-grid { grid-template-columns: 1fr; }
             .footer-grid { grid-template-columns: 1fr; gap: 40px; }
-
             .photo-card { width: 260px; }
             .prescription { transform: rotate(0); }
+            .mascotte-float { width: 80px; bottom: 10px; right: 10px; }
         }
-
         @media (max-width: 600px) {
             .section-pad { padding: 72px 16px; }
-            .hero-logo { width: clamp(180px, 60vw, 280px); }
             .wheel-stage { width: 90vw; height: 90vw; }
             .spin-btn { padding: 14px 40px; font-size: 1.1rem; }
+            .mascotte-float { width: 60px; }
         }
     </style>
 </head>
 <body>
-
-    <!-- FLOATING GLOW ORBS (persistent background) -->
+    <!-- BACKGROUND LAYERS -->
     <div class="glow-orbs" aria-hidden="true">
-        <div class="glow-orb glow-orb--pink"></div>
-        <div class="glow-orb glow-orb--teal"></div>
-        <div class="glow-orb glow-orb--purple"></div>
-        <div class="glow-orb glow-orb--gold"></div>
+        <div class="glow-orb glow-orb--1"></div>
+        <div class="glow-orb glow-orb--2"></div>
+        <div class="glow-orb glow-orb--3"></div>
+        <div class="glow-orb glow-orb--4"></div>
     </div>
-
-    <!-- PERSISTENT BUBBLES CANVAS -->
     <canvas id="bg-canvas" aria-hidden="true"></canvas>
-
-    <!-- CONFETTI CANVAS -->
     <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <!-- FLOATING MASCOTTE -->
+    <div class="mascotte-float" aria-hidden="true">
+        <div class="mascotte-container">
+            <div class="mascotte-drip"></div>
+            <img src="assets/img/mascotte.png" alt="" width="120">
+        </div>
+    </div>
 
     <!-- NAVIGATION -->
     <nav class="nav" id="mainNav">
@@ -1110,18 +407,15 @@
             <li><a href="#info">Spreekuur</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
-        <button class="nav-mobile-btn" id="navMobileBtn" aria-label="Menu">
-            <span></span><span></span><span></span>
-        </button>
+        <button class="nav-mobile-btn" id="navMobileBtn" aria-label="Menu"><span></span><span></span><span></span></button>
     </nav>
 
-    <!-- ===== HERO ===== -->
+    <!-- HERO -->
     <section class="hero" id="hero">
         <video class="hero-video" autoplay muted loop playsinline poster="assets/img/foto-buitenkant.jpg">
             <source src="assets/video/hero-bg.mp4" type="video/mp4">
         </video>
         <div class="hero-overlay"></div>
-
         <div class="hero-content">
             <img src="assets/img/logo.png" alt="Feestcafe De Dokter" class="hero-logo">
             <h1 class="hero-title">
@@ -1131,25 +425,14 @@
             <p class="hero-tagline">Het recept voor een goede avond</p>
             <a href="#wheel" class="hero-cta">Draai het Rad</a>
         </div>
-
-        <div class="hero-scroll">
-            <span>Scroll</span>
-            <div class="drip-line">
-                <div class="drip-dot"></div>
-            </div>
-        </div>
+        <div class="hero-scroll"><span>Scroll</span><div class="drip-line"><div class="drip-dot"></div></div></div>
     </section>
 
-    <!-- HEARTBEAT DIVIDER -->
-    <div class="heartbeat-divider" data-reveal>
-        <svg viewBox="0 0 600 40" preserveAspectRatio="none">
-            <path d="M0,20 L180,20 L195,20 L210,5 L225,35 L240,2 L255,38 L270,20 L285,20 L420,20 L600,20" />
-        </svg>
-    </div>
+    <div class="heartbeat-divider" data-reveal><svg viewBox="0 0 600 40" preserveAspectRatio="none"><path d="M0,20 L180,20 L195,20 L210,5 L225,35 L240,2 L255,38 L270,20 L285,20 L420,20 L600,20"/></svg></div>
 
-    <!-- ===== ABOUT ===== -->
-    <section class="about section-bg bg-gradient-teal noise-overlay" id="about">
-        <div class="section-pad" style="position: relative;">
+    <!-- ABOUT -->
+    <section class="about section-bg" id="about">
+        <div class="section-pad">
             <div class="about-grid">
                 <div class="about-image-wrap reveal">
                     <img src="assets/img/foto-buitenkant.jpg" alt="Feestcafe De Dokter buitenkant" loading="lazy">
@@ -1157,49 +440,27 @@
                 <div class="reveal reveal-delay-1">
                     <p class="about-label">Wie zijn wij?</p>
                     <h2>Het meest besmettelijke feestcafe</h2>
-                    <p>
-                        <strong>Feestcafe De Dokter</strong> is al jaren het adres voor iedereen die toe is aan een
-                        flinke dosis feest. Ons team van ervaren "specialisten" staat klaar om je de
-                        ultieme behandeling te geven.
-                    </p>
-                    <p>
-                        Of je nu komt voor het legendarische <strong>Rad van Fortuin</strong>, onze befaamde
-                        shotjes, of gewoon een avondje vol muziek en gekkigheid - bij De Dokter
-                        ga je gegarandeerd met een glimlach naar huis.
-                    </p>
-                    <p style="font-family: var(--font-accent); color: var(--teal-light); font-size: 1.1rem; margin-top: 24px;">
-                        Bijwerkingen: keelpijn van het meezingen, spierpijn van het dansen, en een onbedwingbare neiging om terug te komen.
-                    </p>
+                    <p><strong>Feestcafe De Dokter</strong> is al jaren het adres voor iedereen die toe is aan een flinke dosis feest. Ons team van ervaren "specialisten" staat klaar om je de ultieme behandeling te geven.</p>
+                    <p>Of je nu komt voor het legendarische <strong>Rad van Fortuin</strong>, onze befaamde shotjes, of gewoon een avondje vol muziek en gekkigheid - bij De Dokter ga je gegarandeerd met een glimlach naar huis.</p>
+                    <img src="assets/img/dokter-illustratie.png" alt="De Dokter mascotte" class="about-mascotte-inline reveal reveal-delay-2" loading="lazy">
                 </div>
             </div>
-            <img src="assets/img/mascotte.png" alt="" class="about-mascotte" loading="lazy">
         </div>
     </section>
 
-    <!-- HEARTBEAT DIVIDER -->
-    <div class="heartbeat-divider" data-reveal>
-        <svg viewBox="0 0 600 40" preserveAspectRatio="none">
-            <path d="M0,20 L180,20 L195,20 L210,5 L225,35 L240,2 L255,38 L270,20 L285,20 L420,20 L600,20" />
-        </svg>
-    </div>
+    <div class="heartbeat-divider" data-reveal><svg viewBox="0 0 600 40" preserveAspectRatio="none"><path d="M0,20 L180,20 L195,20 L210,5 L225,35 L240,2 L255,38 L270,20 L285,20 L420,20 L600,20"/></svg></div>
 
-    <!-- ===== WHEEL SECTION ===== -->
-    <section class="wheel-section section-bg bg-gradient-gold noise-overlay" id="wheel">
-        <div class="section-pad" style="position: relative; z-index: 2;">
+    <!-- WHEEL -->
+    <section class="wheel-section section-bg" id="wheel">
+        <div class="section-pad" style="z-index:2">
             <h2 class="reveal">Het Rad van Fortuin</h2>
             <p class="wheel-subtitle reveal reveal-delay-1">Wat schrijft De Dokter voor?</p>
-
             <div class="wheel-stage reveal reveal-delay-2">
                 <div class="wheel-pointer"></div>
-                <div class="wheel-img-wrap" id="wheelWrap">
-                    <img src="assets/img/draairad.png" alt="Rad van Fortuin" class="wheel-img" id="wheelImg" draggable="false">
-                    <div class="wheel-glow"></div>
-                </div>
+                <div class="wheel-img-wrap"><img src="assets/img/draairad.png" alt="Rad van Fortuin" class="wheel-img" id="wheelImg" draggable="false"><div class="wheel-glow"></div></div>
                 <div class="wheel-center"></div>
             </div>
-
             <button class="spin-btn reveal reveal-delay-3" id="spinBtn">Draai!</button>
-
             <div class="wheel-result">
                 <div class="result-card" id="resultCard">
                     <p class="result-rx">Rx</p>
@@ -1212,81 +473,63 @@
         <div class="wheel-bg-glow"></div>
     </section>
 
-    <!-- HEARTBEAT DIVIDER -->
-    <div class="heartbeat-divider" data-reveal>
-        <svg viewBox="0 0 600 40" preserveAspectRatio="none">
-            <path d="M0,20 L180,20 L195,20 L210,5 L225,35 L240,2 L255,38 L270,20 L285,20 L420,20 L600,20" />
-        </svg>
-    </div>
+    <div class="heartbeat-divider" data-reveal><svg viewBox="0 0 600 40" preserveAspectRatio="none"><path d="M0,20 L180,20 L195,20 L210,5 L225,35 L240,2 L255,38 L270,20 L285,20 L420,20 L600,20"/></svg></div>
 
-    <!-- ===== PHOTOS ===== -->
-    <section class="photos-section section-bg bg-gradient-pink noise-overlay" id="photos">
+    <!-- PHOTOS -->
+    <section class="photos-section section-bg" id="photos">
         <h2 class="reveal">Sfeerbeelden</h2>
         <p class="photos-subtitle reveal reveal-delay-1">Bekijk de bijwerkingen</p>
-
         <div class="photo-strip" id="photoStrip">
-            <div class="photo-card"><img src="assets/img/foto-feest.jpg" alt="Feest bij De Dokter" loading="lazy"></div>
-            <div class="photo-card"><img src="assets/img/foto-confetti.jpg" alt="Confetti regen" loading="lazy"></div>
-            <div class="photo-card"><img src="assets/img/foto-flugel.jpg" alt="Flugel shots" loading="lazy"></div>
-            <div class="photo-card"><img src="assets/img/foto-mascotte-live.jpg" alt="De mascotte" loading="lazy"></div>
-            <div class="photo-card"><img src="assets/img/foto-bar.jpg" alt="De bar" loading="lazy"></div>
-            <div class="photo-card"><img src="assets/img/foto-team.jpg" alt="Het team" loading="lazy"></div>
-            <div class="photo-card"><img src="assets/img/foto-rad.jpg" alt="Het rad" loading="lazy"></div>
+            <div class="photo-card"><img src="assets/img/foto-feest.jpg" alt="Feest" loading="lazy"></div>
+            <div class="photo-card"><img src="assets/img/foto-confetti.jpg" alt="Confetti" loading="lazy"></div>
+            <div class="photo-card"><img src="assets/img/foto-flugel.jpg" alt="Flugel" loading="lazy"></div>
+            <div class="photo-card"><img src="assets/img/foto-mascotte-live.jpg" alt="Mascotte" loading="lazy"></div>
+            <div class="photo-card"><img src="assets/img/foto-bar.jpg" alt="Bar" loading="lazy"></div>
+            <div class="photo-card"><img src="assets/img/foto-team.jpg" alt="Team" loading="lazy"></div>
+            <div class="photo-card"><img src="assets/img/foto-rad.jpg" alt="Rad" loading="lazy"></div>
             <div class="photo-card"><img src="assets/img/foto-flugel2.jpg" alt="Flugel" loading="lazy"></div>
         </div>
     </section>
 
-    <!-- HEARTBEAT DIVIDER -->
-    <div class="heartbeat-divider" data-reveal>
-        <svg viewBox="0 0 600 40" preserveAspectRatio="none">
-            <path d="M0,20 L180,20 L195,20 L210,5 L225,35 L240,2 L255,38 L270,20 L285,20 L420,20 L600,20" />
-        </svg>
-    </div>
+    <div class="heartbeat-divider" data-reveal><svg viewBox="0 0 600 40" preserveAspectRatio="none"><path d="M0,20 L180,20 L195,20 L210,5 L225,35 L240,2 L255,38 L270,20 L285,20 L420,20 L600,20"/></svg></div>
 
-    <!-- ===== INFO / SPREEKUUR ===== -->
-    <section class="info-section section-bg bg-gradient-purple noise-overlay" id="info">
+    <!-- INFO -->
+    <section class="info-section section-bg" id="info">
         <div class="section-pad">
             <div class="info-grid">
                 <div class="info-text reveal">
                     <p class="info-label">Openingstijden</p>
                     <h2>Wanneer is de dokter in?</h2>
-                    <p>
-                        Elke week houdt De Dokter spreekuur voor iedereen die een recept nodig heeft
-                        voor een onvergetelijke avond. Geen afspraak nodig, gewoon binnenlopen.
-                    </p>
+                    <p>Elke week houdt De Dokter spreekuur voor iedereen die een recept nodig heeft voor een onvergetelijke avond. Geen afspraak nodig, gewoon binnenlopen.</p>
                     <div class="highlight-box">
                         <h4>Prive feest? Bel de Dokter!</h4>
-                        <p>Wil je De Dokter afhuren voor een prive feest, vrijgezellenfeest of bedrijfsuitje?
-                        Neem contact met ons op en we schrijven een behandelplan op maat voor.</p>
+                        <p>Wil je De Dokter afhuren voor een prive feest, vrijgezellenfeest of bedrijfsuitje? Neem contact met ons op en we schrijven een behandelplan op maat voor.</p>
                     </div>
                 </div>
-
                 <div class="reveal reveal-delay-2">
                     <div class="prescription">
                         <div class="prescription-header">
                             <img src="assets/img/mascotte-klein.png" alt="">
-                            <h3>Feestcafe De Dokter<br><small style="font-weight:400; color:#888;">Officieel Receptblok</small></h3>
+                            <h3>Feestcafe De Dokter<br><small style="font-weight:400;color:#888">Officieel Receptblok</small></h3>
                         </div>
                         <p class="rx-symbol">Rx</p>
                         <ul class="hours-list">
-                            <li><span class="day">Maandag</span> <span class="closed">Gesloten</span></li>
-                            <li><span class="day">Dinsdag</span> <span class="closed">Gesloten</span></li>
-                            <li><span class="day">Woensdag</span> <span class="closed">Gesloten</span></li>
-                            <li><span class="day">Donderdag</span> <span class="time">22:00 - 03:00</span></li>
-                            <li><span class="day">Vrijdag</span> <span class="time">22:00 - 04:00</span></li>
-                            <li><span class="day">Zaterdag</span> <span class="time">22:00 - 04:00</span></li>
-                            <li><span class="day">Zondag</span> <span class="closed">Gesloten</span></li>
+                            <li><span class="day">Maandag</span><span class="closed">Gesloten</span></li>
+                            <li><span class="day">Dinsdag</span><span class="closed">Gesloten</span></li>
+                            <li><span class="day">Woensdag</span><span class="closed">Gesloten</span></li>
+                            <li><span class="day">Donderdag</span><span class="time">22:00 - 03:00</span></li>
+                            <li><span class="day">Vrijdag</span><span class="time">22:00 - 04:00</span></li>
+                            <li><span class="day">Zaterdag</span><span class="time">22:00 - 04:00</span></li>
+                            <li><span class="day">Zondag</span><span class="closed">Gesloten</span></li>
                         </ul>
-                        <p style="margin-top: 20px; font-family: var(--font-accent); font-size: 0.85rem; color: #999;">
-                            * Dosering: minimaal 1x per week aanbevolen
-                        </p>
+                        <p style="margin-top:20px;font-family:var(--font-accent);font-size:0.85rem;color:#999">* Dosering: minimaal 1x per week aanbevolen</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ===== FOOTER ===== -->
+    <!-- FOOTER -->
     <footer class="footer" id="contact">
         <div class="section-pad">
             <div class="footer-grid">
@@ -1294,18 +537,11 @@
                     <img src="assets/img/logo.png" alt="Feestcafe De Dokter">
                     <p>Het meest besmettelijke feestcafe. Al jaren het recept voor onvergetelijke avonden.</p>
                     <div class="social-links">
-                        <a href="#" class="social-link" aria-label="Instagram">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-                        </a>
-                        <a href="#" class="social-link" aria-label="Facebook">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-                        </a>
-                        <a href="#" class="social-link" aria-label="TikTok">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.16 15a6.34 6.34 0 0 0 6.33 6.33 6.34 6.34 0 0 0 6.33-6.33V8.72a8.19 8.19 0 0 0 4.77 1.52V6.79a4.85 4.85 0 0 1-1-.1z"/></svg>
-                        </a>
+                        <a href="#" class="social-link" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+                        <a href="#" class="social-link" aria-label="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+                        <a href="#" class="social-link" aria-label="TikTok"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.16 15a6.34 6.34 0 0 0 6.33 6.33 6.34 6.34 0 0 0 6.33-6.33V8.72a8.19 8.19 0 0 0 4.77 1.52V6.79a4.85 4.85 0 0 1-1-.1z"/></svg></a>
                     </div>
                 </div>
-
                 <div>
                     <h4>Navigatie</h4>
                     <ul class="footer-links">
@@ -1315,86 +551,204 @@
                         <li><a href="#info">Openingstijden</a></li>
                     </ul>
                 </div>
-
                 <div>
                     <h4>Contact</h4>
                     <ul class="footer-links">
-                        <li><!-- Vul adres in --></li>
-                        <li><!-- Vul telefoonnummer in --></li>
+                        <li><!-- Adres --></li>
+                        <li><!-- Telefoon --></li>
                         <li><a href="mailto:info@cafededokter.nl">info@cafededokter.nl</a></li>
                     </ul>
                 </div>
             </div>
-
-            <div class="footer-bottom">
-                <p>&copy; 2025 Feestcafe De Dokter. Alle rechten voorbehouden. Drink met mate.</p>
-            </div>
+            <div class="footer-bottom"><p>&copy; 2025 Feestcafe De Dokter. Alle rechten voorbehouden.</p></div>
         </div>
     </footer>
 
-    <!-- ===== JAVASCRIPT ===== -->
     <script>
-        // ===== PERSISTENT FLOATING BUBBLES =====
+        // ===== BACKGROUND: CONFETTI + MEDICAL ICONS =====
         const bgCanvas = document.getElementById('bg-canvas');
         const bgCtx = bgCanvas.getContext('2d');
-        let bubbles = [];
 
-        function resizeBgCanvas() {
-            bgCanvas.width = window.innerWidth;
-            bgCanvas.height = window.innerHeight;
-        }
-        resizeBgCanvas();
-        window.addEventListener('resize', resizeBgCanvas);
+        function resizeBg() { bgCanvas.width = window.innerWidth; bgCanvas.height = document.documentElement.scrollHeight; }
+        resizeBg();
+        window.addEventListener('resize', resizeBg);
 
-        const bubbleColors = [
-            'rgba(26,138,125,',   // teal
-            'rgba(255,45,123,',   // pink
-            'rgba(245,197,24,',   // gold
-            'rgba(139,92,246,',   // purple
-            'rgba(65,105,225,',   // blue
+        // Confetti pieces (like the DOKTER_ACHTERGROND pattern)
+        const confettiDots = [];
+        const medicalIcons = [];
+        const totalHeight = () => document.documentElement.scrollHeight;
+
+        const confettiColors = [
+            'rgba(45,138,110,', 'rgba(58,170,138,', 'rgba(26,107,86,',
+            'rgba(120,180,140,', 'rgba(180,200,120,', 'rgba(200,210,160,',
         ];
 
-        function createBubble(randomY) {
-            return {
-                x: Math.random() * bgCanvas.width,
-                y: randomY ? Math.random() * bgCanvas.height : bgCanvas.height + 10,
-                r: 1.5 + Math.random() * 4,
-                speed: 0.15 + Math.random() * 0.5,
-                wobble: Math.random() * Math.PI * 2,
-                wobbleSpeed: 0.005 + Math.random() * 0.015,
-                wobbleRadius: 0.3 + Math.random() * 1,
-                opacity: 0.12 + Math.random() * 0.25,
-                color: bubbleColors[Math.floor(Math.random() * bubbleColors.length)]
-            };
+        // Create confetti rectangles spread across the full page
+        function initConfetti() {
+            confettiDots.length = 0;
+            const h = totalHeight();
+            for (let i = 0; i < 200; i++) {
+                confettiDots.push({
+                    x: Math.random() * bgCanvas.width,
+                    y: Math.random() * h,
+                    w: 4 + Math.random() * 10,
+                    h: 2 + Math.random() * 5,
+                    rotation: Math.random() * Math.PI * 2,
+                    rotSpeed: (Math.random() - 0.5) * 0.003,
+                    driftX: (Math.random() - 0.5) * 0.15,
+                    driftY: -0.05 - Math.random() * 0.15,
+                    color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+                    opacity: 0.15 + Math.random() * 0.25,
+                });
+            }
         }
 
-        // Initialize
-        for (let i = 0; i < 120; i++) {
-            bubbles.push(createBubble(true));
+        // Medical icons: hearts, pills, crosses, syringes
+        function initMedical() {
+            medicalIcons.length = 0;
+            const h = totalHeight();
+            const types = ['heart', 'pill', 'cross', 'syringe', 'bandaid'];
+            for (let i = 0; i < 30; i++) {
+                medicalIcons.push({
+                    x: Math.random() * bgCanvas.width,
+                    y: Math.random() * h,
+                    size: 10 + Math.random() * 18,
+                    type: types[Math.floor(Math.random() * types.length)],
+                    rotation: Math.random() * Math.PI * 2,
+                    rotSpeed: (Math.random() - 0.5) * 0.002,
+                    driftX: (Math.random() - 0.5) * 0.1,
+                    driftY: -0.03 - Math.random() * 0.08,
+                    opacity: 0.06 + Math.random() * 0.1,
+                });
+            }
         }
 
-        function animateBubbles() {
+        function drawHeart(ctx, x, y, size) {
+            ctx.beginPath();
+            ctx.moveTo(x, y + size * 0.3);
+            ctx.bezierCurveTo(x, y, x - size * 0.5, y, x - size * 0.5, y + size * 0.3);
+            ctx.bezierCurveTo(x - size * 0.5, y + size * 0.6, x, y + size * 0.8, x, y + size);
+            ctx.bezierCurveTo(x, y + size * 0.8, x + size * 0.5, y + size * 0.6, x + size * 0.5, y + size * 0.3);
+            ctx.bezierCurveTo(x + size * 0.5, y, x, y, x, y + size * 0.3);
+            ctx.fill();
+        }
+
+        function drawCross(ctx, x, y, size) {
+            const w = size * 0.3;
+            ctx.fillRect(x - w/2, y - size/2, w, size);
+            ctx.fillRect(x - size/2, y - w/2, size, w);
+        }
+
+        function drawPill(ctx, x, y, size) {
+            const w = size * 0.4, h = size;
+            ctx.beginPath();
+            ctx.roundRect(x - w/2, y - h/2, w, h, w/2);
+            ctx.fill();
+        }
+
+        function drawSyringe(ctx, x, y, size) {
+            // Barrel
+            ctx.fillRect(x - size*0.15, y - size*0.4, size*0.3, size*0.6);
+            // Needle
+            ctx.fillRect(x - size*0.03, y - size*0.6, size*0.06, size*0.25);
+            // Plunger
+            ctx.fillRect(x - size*0.2, y + size*0.2, size*0.4, size*0.06);
+            ctx.fillRect(x - size*0.04, y + size*0.2, size*0.08, size*0.3);
+        }
+
+        function drawBandaid(ctx, x, y, size) {
+            ctx.beginPath();
+            ctx.roundRect(x - size*0.6, y - size*0.15, size*1.2, size*0.3, size*0.1);
+            ctx.fill();
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(Math.PI/2);
+            ctx.beginPath();
+            ctx.roundRect(-size*0.6, -size*0.15, size*1.2, size*0.3, size*0.1);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function drawMedicalIcon(ctx, icon) {
+            ctx.save();
+            ctx.translate(icon.x, icon.y - window.scrollY * 0.02);
+            ctx.rotate(icon.rotation);
+            ctx.fillStyle = `rgba(26, 138, 125, ${icon.opacity})`;
+            const s = icon.size;
+            switch(icon.type) {
+                case 'heart': drawHeart(ctx, 0, -s/2, s); break;
+                case 'cross': drawCross(ctx, 0, 0, s); break;
+                case 'pill': drawPill(ctx, 0, 0, s); break;
+                case 'syringe': drawSyringe(ctx, 0, 0, s); break;
+                case 'bandaid': drawBandaid(ctx, 0, 0, s); break;
+            }
+            ctx.restore();
+        }
+
+        initConfetti();
+        initMedical();
+
+        function animateBg() {
             bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            const scrollY = window.scrollY;
+            const viewTop = scrollY;
+            const viewBottom = scrollY + window.innerHeight;
 
-            bubbles.forEach(b => {
-                b.y -= b.speed;
-                b.wobble += b.wobbleSpeed;
-                b.x += Math.sin(b.wobble) * b.wobbleRadius;
+            // Draw confetti
+            confettiDots.forEach(c => {
+                c.rotation += c.rotSpeed;
+                c.x += c.driftX;
+                c.y += c.driftY;
 
-                if (b.y < -10) {
-                    b.y = bgCanvas.height + 10;
-                    b.x = Math.random() * bgCanvas.width;
-                }
+                const h = totalHeight();
+                if (c.y < 0) { c.y = h; c.x = Math.random() * bgCanvas.width; }
+                if (c.x < -20) c.x = bgCanvas.width + 20;
+                if (c.x > bgCanvas.width + 20) c.x = -20;
 
-                bgCtx.beginPath();
-                bgCtx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-                bgCtx.fillStyle = b.color + b.opacity + ')';
-                bgCtx.fill();
+                // Only draw if in viewport (with buffer)
+                const screenY = c.y - scrollY;
+                if (screenY < -50 || screenY > window.innerHeight + 50) return;
+
+                bgCtx.save();
+                bgCtx.translate(c.x, screenY);
+                bgCtx.rotate(c.rotation);
+                bgCtx.fillStyle = c.color + c.opacity + ')';
+                bgCtx.fillRect(-c.w/2, -c.h/2, c.w, c.h);
+                bgCtx.restore();
             });
 
-            requestAnimationFrame(animateBubbles);
+            // Draw medical icons
+            medicalIcons.forEach(icon => {
+                icon.rotation += icon.rotSpeed;
+                icon.x += icon.driftX;
+                icon.y += icon.driftY;
+
+                const h = totalHeight();
+                if (icon.y < 0) { icon.y = h; icon.x = Math.random() * bgCanvas.width; }
+                if (icon.x < -30) icon.x = bgCanvas.width + 30;
+                if (icon.x > bgCanvas.width + 30) icon.x = -30;
+
+                const screenY = icon.y - scrollY;
+                if (screenY < -50 || screenY > window.innerHeight + 50) return;
+
+                bgCtx.save();
+                bgCtx.translate(icon.x, screenY);
+                bgCtx.rotate(icon.rotation);
+                bgCtx.fillStyle = `rgba(37, 181, 165, ${icon.opacity})`;
+                const s = icon.size;
+                switch(icon.type) {
+                    case 'heart': drawHeart(bgCtx, 0, -s/2, s); break;
+                    case 'cross': drawCross(bgCtx, 0, 0, s); break;
+                    case 'pill': drawPill(bgCtx, 0, 0, s); break;
+                    case 'syringe': drawSyringe(bgCtx, 0, 0, s); break;
+                    case 'bandaid': drawBandaid(bgCtx, 0, 0, s); break;
+                }
+                bgCtx.restore();
+            });
+
+            requestAnimationFrame(animateBg);
         }
-        animateBubbles();
+        animateBg();
 
         // ===== NAVIGATION =====
         const nav = document.getElementById('mainNav');
@@ -1402,41 +756,23 @@
         const navLinks = document.getElementById('navLinks');
 
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) {
-                nav.classList.add('visible');
-            } else {
-                nav.classList.remove('visible');
-            }
+            nav.classList.toggle('visible', window.scrollY > 300);
         });
+        navMobileBtn.addEventListener('click', () => navLinks.classList.toggle('mobile-open'));
+        navLinks.querySelectorAll('a').forEach(l => l.addEventListener('click', () => navLinks.classList.remove('mobile-open')));
 
-        navMobileBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('mobile-open');
-        });
-
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => navLinks.classList.remove('mobile-open'));
-        });
-
-        // ===== REVEAL ON SCROLL =====
-        const revealElements = document.querySelectorAll('.reveal, [data-reveal]');
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('revealed', 'animated');
-                }
-            });
+        // ===== REVEAL =====
+        const revealObs = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('revealed', 'animated'); });
         }, { threshold: 0.15 });
-
-        revealElements.forEach(el => revealObserver.observe(el));
+        document.querySelectorAll('.reveal, [data-reveal]').forEach(el => revealObs.observe(el));
 
         // ===== WHEEL SPIN =====
         const wheelImg = document.getElementById('wheelImg');
         const spinBtn = document.getElementById('spinBtn');
         const resultCard = document.getElementById('resultCard');
         const resultPrize = document.getElementById('resultPrize');
-
-        let currentAngle = 0;
-        let isSpinning = false;
+        let currentAngle = 0, isSpinning = false;
 
         const prizes = [
             'Zakje Chips', 'Dutch Drop', 'Devilshot 6x', 'Rocketshot 5x',
@@ -1448,163 +784,102 @@
             'Boswandeling 8x', 'Rocketshot 4x', 'Devilshot', 'Boswandeling'
         ];
 
-        function spinWheel() {
+        spinBtn.addEventListener('click', () => {
             if (isSpinning) return;
             isSpinning = true;
             spinBtn.disabled = true;
             resultCard.classList.remove('show');
 
-            const extraRotations = (4 + Math.random() * 6) * 360;
-            const randomOffset = Math.random() * 360;
-            const targetAngle = currentAngle + extraRotations + randomOffset;
-            const duration = 4000 + Math.random() * 2000;
+            const extra = (4 + Math.random() * 6) * 360;
+            const offset = Math.random() * 360;
+            const target = currentAngle + extra + offset;
+            const dur = 4000 + Math.random() * 2000;
 
-            wheelImg.style.transition = `transform ${duration}ms cubic-bezier(0.17, 0.67, 0.12, 0.99)`;
-            wheelImg.style.transform = `rotate(${targetAngle}deg)`;
-
-            currentAngle = targetAngle;
+            wheelImg.style.transition = `transform ${dur}ms cubic-bezier(0.17, 0.67, 0.12, 0.99)`;
+            wheelImg.style.transform = `rotate(${target}deg)`;
+            currentAngle = target;
 
             setTimeout(() => {
                 isSpinning = false;
                 spinBtn.disabled = false;
                 wheelImg.style.transition = 'none';
 
-                const normalizedAngle = ((targetAngle % 360) + 360) % 360;
-                const segmentAngle = 360 / prizes.length;
-                const prizeIndex = Math.floor(((360 - normalizedAngle) + segmentAngle / 2) % 360 / segmentAngle);
-                const prize = prizes[prizeIndex % prizes.length];
+                const norm = ((target % 360) + 360) % 360;
+                const seg = 360 / prizes.length;
+                const idx = Math.floor(((360 - norm) + seg/2) % 360 / seg);
+                const prize = prizes[idx % prizes.length];
 
-                // Show card and start handwriting animation
                 resultPrize.textContent = '';
                 resultCard.classList.add('show');
 
-                // Typewriter effect - doctor scribbling
-                let charIndex = 0;
-                const typeSpeed = 60 + Math.random() * 40; // slightly random speed
+                // Typewriter handwriting effect
+                let ci = 0;
+                const speed = 60 + Math.random() * 40;
                 function typeChar() {
-                    if (charIndex < prize.length) {
-                        resultPrize.textContent += prize[charIndex];
-                        charIndex++;
-                        setTimeout(typeChar, typeSpeed + (Math.random() - 0.5) * 40);
-                    } else {
-                        // Done typing - launch confetti
-                        launchConfetti();
-                    }
+                    if (ci < prize.length) {
+                        resultPrize.textContent += prize[ci++];
+                        setTimeout(typeChar, speed + (Math.random() - 0.5) * 40);
+                    } else { launchConfetti(); }
                 }
-                setTimeout(typeChar, 300); // small pause before writing
-            }, duration + 200);
-        }
+                setTimeout(typeChar, 300);
+            }, dur + 200);
+        });
 
-        spinBtn.addEventListener('click', spinWheel);
+        // ===== CONFETTI BURST =====
+        const cCanvas = document.getElementById('confetti-canvas');
+        const cCtx = cCanvas.getContext('2d');
+        let cPieces = [], cAnimating = false;
 
-        // ===== CONFETTI =====
-        const confettiCanvas = document.getElementById('confetti-canvas');
-        const ctx = confettiCanvas.getContext('2d');
-        let confettiPieces = [];
-        let confettiAnimating = false;
+        function resizeC() { cCanvas.width = window.innerWidth; cCanvas.height = window.innerHeight; }
+        resizeC(); window.addEventListener('resize', resizeC);
 
-        function resizeConfettiCanvas() {
-            confettiCanvas.width = window.innerWidth;
-            confettiCanvas.height = window.innerHeight;
-        }
-        resizeConfettiCanvas();
-        window.addEventListener('resize', resizeConfettiCanvas);
-
-        const confettiColors = ['#ff2d7b', '#f5c518', '#1a8a7d', '#4169e1', '#8b5cf6', '#ff6b35', '#25b5a5', '#ff4081'];
+        const cColors = ['#ff2d7b','#f5c518','#1a8a7d','#4169e1','#8b5cf6','#ff6b35','#25b5a5'];
 
         function launchConfetti() {
-            confettiPieces = [];
+            cPieces = [];
             for (let i = 0; i < 150; i++) {
-                confettiPieces.push({
-                    x: confettiCanvas.width * 0.5 + (Math.random() - 0.5) * 300,
-                    y: confettiCanvas.height * 0.3 + (Math.random() - 0.5) * 200,
-                    w: 6 + Math.random() * 8,
-                    h: 4 + Math.random() * 4,
-                    color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
-                    vx: (Math.random() - 0.5) * 12,
-                    vy: -5 - Math.random() * 8,
-                    rotation: Math.random() * 360,
-                    rotSpeed: (Math.random() - 0.5) * 12,
-                    opacity: 1,
+                cPieces.push({
+                    x: cCanvas.width*0.5 + (Math.random()-0.5)*300,
+                    y: cCanvas.height*0.3 + (Math.random()-0.5)*200,
+                    w: 6+Math.random()*8, h: 4+Math.random()*4,
+                    color: cColors[Math.floor(Math.random()*cColors.length)],
+                    vx: (Math.random()-0.5)*12, vy: -5-Math.random()*8,
+                    rot: Math.random()*360, rs: (Math.random()-0.5)*12, op: 1,
                 });
             }
-            if (!confettiAnimating) {
-                confettiAnimating = true;
-                animateConfetti();
-            }
+            if (!cAnimating) { cAnimating = true; animateC(); }
         }
 
-        function animateConfetti() {
-            ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-
-            confettiPieces = confettiPieces.filter(p => p.opacity > 0.01);
-
-            if (confettiPieces.length === 0) {
-                confettiAnimating = false;
-                return;
-            }
-
-            confettiPieces.forEach(p => {
-                p.vy += 0.12;
-                p.vx *= 0.99;
-                p.x += p.vx;
-                p.y += p.vy;
-                p.rotation += p.rotSpeed;
-
-                if (p.y > confettiCanvas.height * 0.8) {
-                    p.opacity -= 0.02;
-                }
-
-                ctx.save();
-                ctx.translate(p.x, p.y);
-                ctx.rotate((p.rotation * Math.PI) / 180);
-                ctx.globalAlpha = p.opacity;
-                ctx.fillStyle = p.color;
-                ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-                ctx.restore();
+        function animateC() {
+            cCtx.clearRect(0,0,cCanvas.width,cCanvas.height);
+            cPieces = cPieces.filter(p => p.op > 0.01);
+            if (!cPieces.length) { cAnimating = false; return; }
+            cPieces.forEach(p => {
+                p.vy += 0.12; p.vx *= 0.99; p.x += p.vx; p.y += p.vy; p.rot += p.rs;
+                if (p.y > cCanvas.height*0.8) p.op -= 0.02;
+                cCtx.save(); cCtx.translate(p.x,p.y); cCtx.rotate(p.rot*Math.PI/180);
+                cCtx.globalAlpha = p.op; cCtx.fillStyle = p.color;
+                cCtx.fillRect(-p.w/2,-p.h/2,p.w,p.h); cCtx.restore();
             });
-
-            requestAnimationFrame(animateConfetti);
+            requestAnimationFrame(animateC);
         }
 
-        // ===== PHOTO STRIP DRAG SCROLL =====
-        const photoStrip = document.getElementById('photoStrip');
-        let isDragging = false;
-        let startX, scrollLeftPos;
+        // ===== PHOTO STRIP DRAG =====
+        const ps = document.getElementById('photoStrip');
+        let dragging = false, sx, sl;
+        ps.addEventListener('mousedown', e => { dragging=true; sx=e.pageX-ps.offsetLeft; sl=ps.scrollLeft; });
+        ps.addEventListener('mouseleave', () => dragging=false);
+        ps.addEventListener('mouseup', () => dragging=false);
+        ps.addEventListener('mousemove', e => { if(!dragging)return; e.preventDefault(); ps.scrollLeft=sl-(e.pageX-ps.offsetLeft-sx)*1.5; });
 
-        photoStrip.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            startX = e.pageX - photoStrip.offsetLeft;
-            scrollLeftPos = photoStrip.scrollLeft;
-        });
-
-        photoStrip.addEventListener('mouseleave', () => isDragging = false);
-        photoStrip.addEventListener('mouseup', () => isDragging = false);
-
-        photoStrip.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            e.preventDefault();
-            const x = e.pageX - photoStrip.offsetLeft;
-            const walk = (x - startX) * 1.5;
-            photoStrip.scrollLeft = scrollLeftPos - walk;
-        });
-
-        // ===== ACTIVE NAV ON SCROLL =====
-        const sections = document.querySelectorAll('section[id]');
-
+        // ===== ACTIVE NAV =====
+        const secs = document.querySelectorAll('section[id]');
         window.addEventListener('scroll', () => {
-            const scrollPos = window.scrollY + 200;
-            sections.forEach(section => {
-                const top = section.offsetTop;
-                const height = section.offsetHeight;
-                const id = section.id;
-
-                if (scrollPos >= top && scrollPos < top + height) {
+            const sp = window.scrollY + 200;
+            secs.forEach(s => {
+                if (sp >= s.offsetTop && sp < s.offsetTop + s.offsetHeight) {
                     navLinks.querySelectorAll('a').forEach(a => {
-                        a.classList.remove('active');
-                        if (a.getAttribute('href') === '#' + id) {
-                            a.classList.add('active');
-                        }
+                        a.classList.toggle('active', a.getAttribute('href') === '#' + s.id);
                     });
                 }
             });
