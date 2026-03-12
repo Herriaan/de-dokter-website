@@ -224,8 +224,10 @@
             border-top: 36px solid var(--gold); filter: drop-shadow(0 0 12px rgba(245,197,24,0.6));
         }
         .wheel-pointer::after { content:''; position: absolute; top: -42px; left: -6px; width: 12px; height: 12px; background: var(--gold); border-radius: 50%; }
+        .wheel-pointer { transition: transform 0.05s ease-out; }
         .wheel-img-wrap { width: 100%; height: 100%; border-radius: 50%; position: relative; }
-        .wheel-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .wheel-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+        .wheel-img.dragging { cursor: grabbing; }
         .wheel-glow {
             position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--teal-light);
             opacity: 0.5; box-shadow: 0 0 30px var(--teal-glow), inset 0 0 30px var(--teal-glow);
@@ -778,62 +780,210 @@
         }, { threshold: 0.15 });
         document.querySelectorAll('.reveal, [data-reveal]').forEach(el => revealObs.observe(el));
 
-        // ===== WHEEL SPIN =====
+        // ===== WHEEL SPIN (Physics-based drag) =====
         const wheelImg = document.getElementById('wheelImg');
+        const wheelStage = document.querySelector('.wheel-stage');
         const spinBtn = document.getElementById('spinBtn');
         const resultCard = document.getElementById('resultCard');
         const resultPrize = document.getElementById('resultPrize');
-        let currentAngle = 0, isSpinning = false;
 
+        let currentAngle = 0;       // current rotation in degrees
+        let angularVelocity = 0;    // degrees per frame
+        let isSpinning = false;      // physics animation running
+        let isDragging = false;      // user is dragging
+        let lastAngle = 0;          // last angle during drag (for velocity calc)
+        let lastTime = 0;
+        let angleHistory = [];       // recent angle samples for velocity
+
+        const FRICTION = 0.985;      // deceleration per frame (lower = more friction)
+        const MIN_VELOCITY = 0.15;   // stop threshold (degrees/frame)
+
+        // Segments in CLOCKWISE order starting from 12 o'clock on the unrotated wheel image.
+        // Adjust SEGMENT_OFFSET (degrees) if the first boundary isn't exactly at 12 o'clock.
+        const SEGMENT_OFFSET = 0;
         const prizes = [
-            'Zakje Chips', 'Dutch Drop', 'Devilshot 6x', 'Rocketshot 5x',
-            'Chaudfontaine Blauw', 'Krokodil', 'Shot naar Keuze', 'Flugel 4x',
-            'Rocketshot Sour 6x', 'Boswandeling Pink 7x', 'Rocketshot XL',
-            'Devilshot Pink', 'Opener De Dokter', 'Flugel',
-            'Dutch Drop 10x', 'Boswandeling', 'Rocketshot Pink',
-            'De Dokter Limoncello', 'Draai Nog Een Keer!', 'Koekie 6x',
-            'Boswandeling 8x', 'Rocketshot 4x', 'Devilshot', 'Boswandeling'
+            'Dutch Drop 8x',            // 0  - top
+            'Zakje Chips',               // 1
+            'Devilshot 6x',              // 2
+            'Rocketshot 5x',             // 3
+            'Chaudfontaine Blauw 2x',    // 4
+            'Krokodil',                  // 5
+            'Shot naar Keuze 4x',        // 6
+            'Flugel 4x',                // 7
+            'Rocketshot Sour 6x',        // 8
+            'Aptmeister 1x',             // 9
+            'Devilshot 5x',              // 10
+            'Boswandeling Pink 7x',      // 11
+            'Dutch Drop 10x',            // 12
+            'Rocketshot XL',             // 13
+            'Opener De Dokter',          // 14
+            'Rocketshot',                // 15
+            'Rocketshot Pink',           // 16
+            'De Dokter Limoncello',      // 17
+            'Flugel',                    // 18
+            'Koekie 6x',                // 19
+            'Boswandeling 6x',           // 20
+            'Boswandeling 9x',           // 21
+            'Rocketshot 4x',             // 22
+            'Draai Nog Een Keer!',       // 23
         ];
 
+        // Get angle from center of wheel to pointer position
+        function getAngleFromCenter(e) {
+            const rect = wheelStage.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            const px = e.clientX || (e.touches && e.touches[0].clientX);
+            const py = e.clientY || (e.touches && e.touches[0].clientY);
+            return Math.atan2(py - cy, px - cx) * (180 / Math.PI);
+        }
+
+        function applyRotation() {
+            wheelImg.style.transform = `rotate(${currentAngle}deg)`;
+        }
+
+        // Drag start
+        function onDragStart(e) {
+            if (isSpinning && !isDragging) {
+                // Stop current spin, allow re-grab
+                isSpinning = false;
+                angularVelocity = 0;
+            }
+            isDragging = true;
+            wheelImg.classList.add('dragging');
+            resultCard.classList.remove('show');
+            lastAngle = getAngleFromCenter(e);
+            lastTime = performance.now();
+            angleHistory = [];
+            e.preventDefault();
+        }
+
+        // Drag move
+        function onDragMove(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            const now = performance.now();
+            const newAngle = getAngleFromCenter(e);
+            let delta = newAngle - lastAngle;
+
+            // Handle wraparound at -180/180
+            if (delta > 180) delta -= 360;
+            if (delta < -180) delta += 360;
+
+            currentAngle += delta;
+            applyRotation();
+
+            // Store recent samples for velocity calculation
+            angleHistory.push({ delta, time: now });
+            // Keep only last 80ms of samples
+            angleHistory = angleHistory.filter(s => now - s.time < 80);
+
+            lastAngle = newAngle;
+            lastTime = now;
+        }
+
+        // Drag end - calculate release velocity
+        function onDragEnd(e) {
+            if (!isDragging) return;
+            isDragging = false;
+            wheelImg.classList.remove('dragging');
+
+            // Calculate angular velocity from recent drag samples
+            if (angleHistory.length >= 2) {
+                const totalDelta = angleHistory.reduce((sum, s) => sum + s.delta, 0);
+                const timeSpan = angleHistory[angleHistory.length - 1].time - angleHistory[0].time;
+                if (timeSpan > 0) {
+                    // Convert to degrees per frame (assuming ~16ms frames)
+                    angularVelocity = (totalDelta / timeSpan) * 16;
+                    // Amplify a bit for a satisfying feel
+                    angularVelocity *= 1.5;
+                    // Clamp max velocity
+                    angularVelocity = Math.max(-30, Math.min(30, angularVelocity));
+                }
+            }
+
+            // Only start physics if there's enough velocity
+            if (Math.abs(angularVelocity) > MIN_VELOCITY) {
+                isSpinning = true;
+                spinBtn.disabled = true;
+                physicsSpin();
+            }
+        }
+
+        // Physics animation loop
+        function physicsSpin() {
+            if (!isSpinning) return;
+
+            angularVelocity *= FRICTION;
+            currentAngle += angularVelocity;
+            applyRotation();
+
+            // Pointer wobble effect near segment boundaries
+            const pointer = document.querySelector('.wheel-pointer');
+            const segAngle = 360 / prizes.length;
+            const normAngle = ((currentAngle % segAngle) + segAngle) % segAngle;
+            if (normAngle < 3 || normAngle > segAngle - 3) {
+                pointer.style.transform = `translateX(-50%) rotate(${(Math.random() - 0.5) * 6}deg)`;
+            } else {
+                pointer.style.transform = 'translateX(-50%)';
+            }
+
+            if (Math.abs(angularVelocity) < MIN_VELOCITY) {
+                // Stopped!
+                isSpinning = false;
+                angularVelocity = 0;
+                spinBtn.disabled = false;
+                pointer.style.transform = 'translateX(-50%)';
+                showPrize();
+                return;
+            }
+
+            requestAnimationFrame(physicsSpin);
+        }
+
+        function showPrize() {
+            // norm = how many degrees the wheel has rotated CW
+            // The segment originally at 'norm' degrees CW from top is now at the pointer
+            const norm = (((currentAngle % 360) + 360) % 360 + SEGMENT_OFFSET) % 360;
+            const seg = 360 / prizes.length;
+            const idx = Math.floor(norm / seg) % prizes.length;
+            const prize = prizes[idx];
+
+            resultPrize.textContent = '';
+            resultCard.classList.add('show');
+
+            // Typewriter handwriting effect
+            let ci = 0;
+            const speed = 60 + Math.random() * 40;
+            function typeChar() {
+                if (ci < prize.length) {
+                    resultPrize.textContent += prize[ci++];
+                    setTimeout(typeChar, speed + (Math.random() - 0.5) * 40);
+                } else { launchConfetti(); }
+            }
+            setTimeout(typeChar, 300);
+        }
+
+        // Mouse events on wheel
+        wheelImg.addEventListener('mousedown', onDragStart);
+        window.addEventListener('mousemove', onDragMove);
+        window.addEventListener('mouseup', onDragEnd);
+
+        // Touch events on wheel
+        wheelImg.addEventListener('touchstart', onDragStart, { passive: false });
+        window.addEventListener('touchmove', onDragMove, { passive: false });
+        window.addEventListener('touchend', onDragEnd);
+
+        // Button still works as fallback - gives a random push
         spinBtn.addEventListener('click', () => {
-            if (isSpinning) return;
+            if (isSpinning || isDragging) return;
+            resultCard.classList.remove('show');
+            // Random strong push (like a flick)
+            const direction = Math.random() > 0.5 ? 1 : -1;
+            angularVelocity = direction * (12 + Math.random() * 15);
             isSpinning = true;
             spinBtn.disabled = true;
-            resultCard.classList.remove('show');
-
-            const extra = (4 + Math.random() * 6) * 360;
-            const offset = Math.random() * 360;
-            const target = currentAngle + extra + offset;
-            const dur = 4000 + Math.random() * 2000;
-
-            wheelImg.style.transition = `transform ${dur}ms cubic-bezier(0.17, 0.67, 0.12, 0.99)`;
-            wheelImg.style.transform = `rotate(${target}deg)`;
-            currentAngle = target;
-
-            setTimeout(() => {
-                isSpinning = false;
-                spinBtn.disabled = false;
-                wheelImg.style.transition = 'none';
-
-                const norm = ((target % 360) + 360) % 360;
-                const seg = 360 / prizes.length;
-                const idx = Math.floor(((360 - norm) + seg/2) % 360 / seg);
-                const prize = prizes[idx % prizes.length];
-
-                resultPrize.textContent = '';
-                resultCard.classList.add('show');
-
-                // Typewriter handwriting effect
-                let ci = 0;
-                const speed = 60 + Math.random() * 40;
-                function typeChar() {
-                    if (ci < prize.length) {
-                        resultPrize.textContent += prize[ci++];
-                        setTimeout(typeChar, speed + (Math.random() - 0.5) * 40);
-                    } else { launchConfetti(); }
-                }
-                setTimeout(typeChar, 300);
-            }, dur + 200);
+            physicsSpin();
         });
 
         // ===== CONFETTI BURST =====
