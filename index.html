@@ -185,7 +185,7 @@
         }
 
         /* ===== ABOUT ===== */
-        .about { background: linear-gradient(180deg, rgba(78,148,112,0.4) 0%, rgba(70,138,100,0.5) 50%, rgba(78,148,112,0.3) 100%); }
+        .about { background: transparent; /* volle achtergrond zichtbaar */ }
         .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
         .about-image-wrap { position: relative; border-radius: 16px; overflow: hidden; }
         .about-image-wrap img { width: 100%; aspect-ratio: 4/5; object-fit: cover; transition: transform 0.6s; }
@@ -201,7 +201,7 @@
         }
 
         /* ===== WHEEL ===== */
-        .wheel-section { background: linear-gradient(180deg, rgba(60,120,85,0.5) 0%, rgba(50,110,75,0.6) 50%, rgba(60,120,85,0.4) 100%); text-align: center; position: relative; overflow: hidden; }
+        .wheel-section { background: rgba(20,60,40,0.55); text-align: center; position: relative; overflow: hidden; }
         .wheel-section h2 { font-family: var(--font-heading); font-size: clamp(2rem,4vw,3.2rem); font-weight: 400; margin-bottom: 8px; }
         .wheel-subtitle { font-family: var(--font-accent); color: var(--teal-light); font-size: 0.95rem; margin-bottom: 48px; }
         .wheel-stage { position: relative; width: min(500px, 85vw); height: min(500px, 85vw); margin: 0 auto 40px; cursor: grab; touch-action: none; }
@@ -273,7 +273,7 @@
         }
 
         /* ===== PHOTOS ===== */
-        .photos-section { background: linear-gradient(180deg, rgba(70,135,100,0.3) 0%, rgba(80,148,110,0.2) 50%, rgba(70,135,100,0.35) 100%); padding: 100px 0; overflow: hidden; }
+        .photos-section { background: transparent; /* volle achtergrond zichtbaar */ padding: 100px 0; overflow: hidden; }
         .photos-section h2 { font-family: var(--font-heading); font-size: clamp(2rem,4vw,3.2rem); font-weight: 400; text-align: center; margin-bottom: 8px; padding: 0 24px; }
         .photos-subtitle { font-family: var(--font-accent); color: var(--neon-pink); text-align: center; font-size: 0.95rem; margin-bottom: 48px; }
         .photo-strip { display: flex; gap: 20px; padding: 0 24px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; cursor: grab; }
@@ -287,7 +287,7 @@
         .photo-card:hover::after { border-color: var(--gold); box-shadow: 0 0 30px rgba(245,197,24,0.15); }
 
         /* ===== INFO ===== */
-        .info-section { background: linear-gradient(180deg, rgba(55,115,80,0.5) 0%, rgba(48,105,72,0.55) 50%, rgba(55,115,80,0.45) 100%); }
+        .info-section { background: rgba(20,60,40,0.55); /* donkerdere band */ }
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
         .prescription {
             background: #faf8f0; color: #1a1a1a; border-radius: 4px; padding: 40px;
