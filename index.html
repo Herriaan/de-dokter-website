@@ -690,10 +690,9 @@
         const MIN_VELOCITY = 0.15;   // stop threshold (degrees/frame)
 
         // Segments in CLOCKWISE order starting from 12 o'clock on the unrotated wheel image.
-        // Segments have UNEQUAL widths - mapped from the actual wheel design.
-        // SEGMENT_ENDS[i] = cumulative end angle (degrees CW from 12 o'clock) of segment i.
+        // Segments have UNEQUAL widths - calibrated from debug overlay screenshot.
         const prizes = [
-            'Dutch Drop 8x',            // 0  - starts at 0°
+            'Dutch Drop 8x',            // 0
             'Zakje Chips',               // 1
             'Devilshot 6x',              // 2
             'Rocketshot 5x',             // 3
@@ -718,33 +717,36 @@
             'Rocketshot 4x',             // 22
             'Draai Nog Een Keer!',       // 23
         ];
-        // End angle of each segment (degrees CW from 12 o'clock).
-        // Measured from the actual wheel image - segments vary from ~11° to ~22° wide.
+        // The first boundary (between seg 23 and seg 0) sits at ~3° CW from 12 o'clock.
+        // BOUNDARY_START shifts the coordinate system so 0° = first boundary.
+        // SEGMENT_ENDS[i] = cumulative width from BOUNDARY_START. Last entry = 360.
+        const BOUNDARY_START = 3;
         const SEGMENT_ENDS = [
-             13,  // 0: Dutch Drop 8x        (13° wide)
-             30,  // 1: Zakje Chips           (17°)
-             50,  // 2: Devilshot 6x          (20°)
-             64,  // 3: Rocketshot 5x         (14°)
-             77,  // 4: Chaudfontaine Blauw   (13°)
-             88,  // 5: Krokodil              (11°)
-            100,  // 6: Shot naar Keuze 4x    (12°)
-            114,  // 7: Flugel 4x             (14°)
-            136,  // 8: Rocketshot Sour 6x    (22°)
-            148,  // 9: Aptmeister 1x         (12°)
-            168,  // 10: Devilshot 5x         (20°)
-            185,  // 11: Boswandeling Pink 7x (17°)
-            199,  // 12: Dutch Drop 10x       (14°)
-            218,  // 13: Rocketshot XL        (19°)
-            232,  // 14: Opener De Dokter     (14°)
-            245,  // 15: Rocketshot           (13°)
-            258,  // 16: Rocketshot Pink      (13°)
-            276,  // 17: De Dokter Limoncello (18°)
-            290,  // 18: Flugel               (14°)
-            302,  // 19: Koekie 6x            (12°)
-            316,  // 20: Boswandeling 6x      (14°)
-            330,  // 21: Boswandeling 9x      (14°)
-            345,  // 22: Rocketshot 4x        (15°)
-            360,  // 23: Draai Nog Een Keer!  (15°)
+        //  cumul  width  actual°
+             14, //  14°   → 17°   Dutch Drop 8x
+             32, //  18°   → 35°   Zakje Chips
+             51, //  19°   → 54°   Devilshot 6x
+             64, //  13°   → 67°   Rocketshot 5x
+             78, //  14°   → 81°   Chaudfontaine Blauw 2x
+             89, //  11°   → 92°   Krokodil
+            101, //  12°   → 104°  Shot naar Keuze 4x
+            116, //  15°   → 119°  Flugel 4x
+            136, //  20°   → 139°  Rocketshot Sour 6x
+            148, //  12°   → 151°  Aptmeister 1x
+            168, //  20°   → 171°  Devilshot 5x
+            185, //  17°   → 188°  Boswandeling Pink 7x
+            199, //  14°   → 202°  Dutch Drop 10x
+            218, //  19°   → 221°  Rocketshot XL
+            232, //  14°   → 235°  Opener De Dokter
+            245, //  13°   → 248°  Rocketshot
+            258, //  13°   → 261°  Rocketshot Pink
+            276, //  18°   → 279°  De Dokter Limoncello
+            290, //  14°   → 293°  Flugel
+            302, //  12°   → 305°  Koekie 6x
+            316, //  14°   → 319°  Boswandeling 6x
+            330, //  14°   → 333°  Boswandeling 9x
+            345, //  15°   → 348°  Rocketshot 4x
+            360, //  15°   → 363°  Draai Nog Een Keer!
         ];
 
         // Get angle from center of wheel to pointer position
@@ -840,7 +842,7 @@
             // Pointer wobble effect near segment boundaries
             const pointer = document.querySelector('.wheel-pointer');
             const rawN = ((currentAngle % 360) + 360) % 360;
-            const pPos = ((360 - rawN + 5) % 360 + 360) % 360;
+            const pPos = ((360 - rawN - BOUNDARY_START + 720) % 360);
             const nearBoundary = SEGMENT_ENDS.some(b => {
                 const dist = Math.min(Math.abs(pPos - b), 360 - Math.abs(pPos - b));
                 return dist < 3;
@@ -868,8 +870,8 @@
             // After CW rotation of X degrees, the segment at the pointer
             // was originally at (360 - X) degrees CW from top on the image
             const rawNorm = ((currentAngle % 360) + 360) % 360;
-            const CALIBRATION = 5; // offset for actual 12-o'clock start position
-            const pointerPos = ((360 - rawNorm + CALIBRATION) % 360 + 360) % 360;
+            // Shift coordinate system so 0° = first segment boundary
+            const pointerPos = ((360 - rawNorm - BOUNDARY_START + 720) % 360);
             // Find segment using actual boundary angles (unequal segment widths)
             let idx = 0;
             for (let i = 0; i < SEGMENT_ENDS.length; i++) {
@@ -1002,7 +1004,8 @@
             svg.setAttribute('viewBox', '0 0 100 100');
             svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:50;';
             SEGMENT_ENDS.forEach((endAngle, i) => {
-                const rad = (endAngle - 90) * Math.PI / 180;
+                const actualAngle = (endAngle + BOUNDARY_START) % 360;
+                const rad = (actualAngle - 90) * Math.PI / 180;
                 const x2 = 50 + 50 * Math.cos(rad);
                 const y2 = 50 + 50 * Math.sin(rad);
                 const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -1011,14 +1014,14 @@
                 line.setAttribute('stroke', 'red'); line.setAttribute('stroke-width', '0.5');
                 line.setAttribute('opacity', '0.8');
                 svg.appendChild(line);
-                // Label
+                // Label with prize name
                 const lx = 50 + 38 * Math.cos(rad);
                 const ly = 50 + 38 * Math.sin(rad);
                 const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                 text.setAttribute('x', lx); text.setAttribute('y', ly);
-                text.setAttribute('fill', 'red'); text.setAttribute('font-size', '2.5');
+                text.setAttribute('fill', 'red'); text.setAttribute('font-size', '2');
                 text.setAttribute('text-anchor', 'middle'); text.setAttribute('dominant-baseline', 'middle');
-                text.textContent = endAngle + '°';
+                text.textContent = actualAngle + '°';
                 svg.appendChild(text);
             });
             wheelStage.querySelector('.wheel-img-wrap').appendChild(svg);
