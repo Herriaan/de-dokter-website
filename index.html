@@ -67,10 +67,6 @@
         .section-pad { padding: 100px 24px; max-width: 1200px; margin: 0 auto; position: relative; z-index: 2; }
 
         /* ===== BACKGROUND LAYERS ===== */
-        #bg-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 0;
-        }
 
         #confetti-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -446,7 +442,6 @@
 <body>
     <!-- BACKGROUND LAYERS -->
     <div id="bg-image" aria-hidden="true"></div>
-    <canvas id="bg-canvas" aria-hidden="true"></canvas>
     <canvas id="confetti-canvas" aria-hidden="true"></canvas>
 
     <!-- FLOATING MASCOTTE -->
@@ -659,75 +654,6 @@
     </footer>
 
     <script>
-        // ===== BACKGROUND: CONFETTI + MEDICAL ICONS =====
-        const bgCanvas = document.getElementById('bg-canvas');
-        const bgCtx = bgCanvas.getContext('2d');
-
-        function resizeBg() { bgCanvas.width = window.innerWidth; bgCanvas.height = window.innerHeight; }
-        resizeBg();
-        window.addEventListener('resize', resizeBg);
-
-        // ===== BACKGROUND: Floating medical icons + extra confetti on top of the bg image =====
-        const confettiDots = [];
-        const totalHeight = () => document.documentElement.scrollHeight;
-
-        // Extra floating confetti that moves on top of the static bg image
-        const confettiColors = [
-            'rgba(138,154,74,',    // olive
-            'rgba(168,184,160,',   // silver-gray
-            'rgba(58,106,74,',     // dark green
-            'rgba(180,190,100,',   // yellow-olive
-            'rgba(245,197,24,',    // gold/yellow
-            'rgba(255,255,255,',   // white
-        ];
-
-        function initConfetti() {
-            confettiDots.length = 0;
-            const h = totalHeight();
-            for (let i = 0; i < 80; i++) {
-                confettiDots.push({
-                    x: Math.random() * bgCanvas.width,
-                    y: Math.random() * h,
-                    w: 8 + Math.random() * 16,
-                    h: 3 + Math.random() * 6,
-                    rotation: Math.random() * Math.PI * 2,
-                    rotSpeed: (Math.random() - 0.5) * 0.002,
-                    driftX: (Math.random() - 0.5) * 0.08,
-                    driftY: -0.02 - Math.random() * 0.05,
-                    color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
-                    opacity: 0.3 + Math.random() * 0.4,
-                });
-            }
-        }
-
-        initConfetti();
-
-        function animateBg() {
-            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-            const scrollY = window.scrollY;
-
-            confettiDots.forEach(c => {
-                c.rotation += c.rotSpeed;
-                c.x += c.driftX;
-                c.y += c.driftY;
-                const h = totalHeight();
-                if (c.y < 0) { c.y = h; c.x = Math.random() * bgCanvas.width; }
-                if (c.x < -20) c.x = bgCanvas.width + 20;
-                if (c.x > bgCanvas.width + 20) c.x = -20;
-                const screenY = c.y - scrollY;
-                if (screenY < -50 || screenY > window.innerHeight + 50) return;
-                bgCtx.save();
-                bgCtx.translate(c.x, screenY);
-                bgCtx.rotate(c.rotation);
-                bgCtx.fillStyle = c.color + c.opacity + ')';
-                bgCtx.fillRect(-c.w/2, -c.h/2, c.w, c.h);
-                bgCtx.restore();
-            });
-
-            requestAnimationFrame(animateBg);
-        }
-        animateBg();
-
         // ===== NAVIGATION =====
         const nav = document.getElementById('mainNav');
         const navMobileBtn = document.getElementById('navMobileBtn');
