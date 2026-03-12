@@ -759,8 +759,9 @@
             return Math.atan2(py - cy, px - cx) * (180 / Math.PI);
         }
 
+        const wheelWrap = wheelStage.querySelector('.wheel-img-wrap');
         function applyRotation() {
-            wheelImg.style.transform = `rotate(${currentAngle}deg)`;
+            wheelWrap.style.transform = `rotate(${currentAngle}deg)`;
         }
         applyRotation(); // apply random start rotation
 
