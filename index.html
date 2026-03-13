@@ -720,34 +720,35 @@
         // The first boundary (between seg 23 and seg 0) sits at ~-18° (=342°) from 12 o'clock.
         // BOUNDARY_START shifts the coordinate system so 0° = first boundary.
         // SEGMENT_ENDS[i] = cumulative width from BOUNDARY_START. Last entry = 360.
-        // Recalibrated via interactive browser testing (13 mrt 2026).
+        // Calibrated using 6 gold anchor lines (~2°,~66°,~129°,~192°,~254°,~299°)
+        // detected via multi-radius pixel analysis, with visual segment width estimates.
         const BOUNDARY_START = -18;
         const SEGMENT_ENDS = [
         //  cumul  width  actual°
-             18, //  18°   →   0°  Dutch Drop 8x
-             37, //  19°   →  19°  Zakje Chips
-             59, //  22°   →  41°  Devilshot 6x
-             74, //  15°   →  56°  Rocketshot 5x
-             89, //  15°   →  71°  Chaudfontaine Blauw 2x
-            102, //  13°   →  84°  Krokodil
-            114, //  12°   →  96°  Shot naar Keuze 4x
-            129, //  15°   → 111°  Flugel 4x
-            147, //  18°   → 129°  Rocketshot Sour 6x
-            160, //  13°   → 142°  Aptmeister 1x
-            179, //  19°   → 161°  Devilshot 5x
-            197, //  18°   → 179°  Boswandeling Pink 7x
-            213, //  16°   → 195°  Dutch Drop 10x
-            231, //  18°   → 213°  Rocketshot XL
-            245, //  14°   → 227°  Opener De Dokter
-            258, //  13°   → 240°  Rocketshot
-            271, //  13°   → 253°  Rocketshot Pink
-            287, //  16°   → 269°  De Dokter Limoncello
-            301, //  14°   → 283°  Flugel
-            314, //  13°   → 296°  Koekie 6x
-            327, //  13°   → 309°  Boswandeling 6x
-            340, //  13°   → 322°  Boswandeling 9x
-            348, //   8°   → 330°  Rocketshot 4x
-            360, //  12°   → 342°  Draai Nog Een Keer!
+             20, //  20°   →   2°  Dutch Drop 8x
+             34, //  14°   →  16°  Zakje Chips
+             54, //  20°   →  36°  Devilshot 6x
+             69, //  15°   →  51°  Rocketshot 5x
+             84, //  15°   →  66°  Chaudfontaine Blauw 2x  ★ gold anchor
+             99, //  15°   →  81°  Krokodil
+            112, //  13°   →  94°  Shot naar Keuze 4x
+            129, //  17°   → 111°  Flugel 4x
+            147, //  18°   → 129°  Rocketshot Sour 6x      ★ gold anchor
+            161, //  14°   → 143°  Aptmeister 1x
+            177, //  16°   → 159°  Devilshot 5x
+            194, //  17°   → 176°  Boswandeling Pink 7x
+            210, //  16°   → 192°  Dutch Drop 10x          ★ gold anchor
+            224, //  14°   → 206°  Rocketshot XL
+            240, //  16°   → 222°  Opener De Dokter
+            256, //  16°   → 238°  Rocketshot
+            272, //  16°   → 254°  Rocketshot Pink          ★ gold anchor
+            288, //  16°   → 270°  De Dokter Limoncello
+            302, //  14°   → 284°  Flugel
+            317, //  15°   → 299°  Koekie 6x               ★ gold anchor
+            329, //  12°   → 311°  Boswandeling 6x
+            341, //  12°   → 323°  Boswandeling 9x
+            350, //   9°   → 332°  Rocketshot 4x
+            360, //  10°   → 342°  Draai Nog Een Keer!
         ];
 
         // Get angle from center of wheel to pointer position
