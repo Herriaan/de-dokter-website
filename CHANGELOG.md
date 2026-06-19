@@ -1,5 +1,12 @@
 # Changelog - Feestcafe De Dokter Website
 
+## v10 - 2026-06-19
+- Lettertypes naar Reetraa-huisstijl: body Open Sans, koppen Bangers (accent Permanent Marker en Caveat behouden) (@herriaan)
+- "Rad van Fortuin" overal vervangen door "Rad" (hero, about, radsectie, alt-tekst) (@herriaan)
+- Tekstcorrecties: Privéfeest, Confettiregen (@herriaan)
+- Zin toegevoegd over de beste feestdj's van Nederland in de about-sectie (@herriaan)
+- Footer: adres Havermarkt 27 en telefoon 06-23855950 ingevuld (@herriaan)
+
 ## v9 - 2026-03-12
 - Design polish op basis van frontend-design review
 - Donkere secties: hoger contrast (0.78 opacity) + backdrop-filter blur
