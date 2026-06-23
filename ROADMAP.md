@@ -24,6 +24,8 @@
 
 ## Next
 
+- [x] Echte teamfoto + bar-foto in fotostrip (issue #6, 23 jun)
+- [ ] DJ-foto in fotostrip (issue #6) - geen authentiek beeld beschikbaar, wacht op klant
 - [ ] Contact gegevens in footer vervanging door echte data (nu placeholders)
 - [ ] Openingstijden verifieren met klant
 - [ ] Glitch/flicker definitief verifieren met klant

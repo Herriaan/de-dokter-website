@@ -1,5 +1,9 @@
 # Changelog - Feestcafe De Dokter Website
 
+## v11 - 2026-06-23
+- Fotostrip: "Het team" nu een echte teamfoto (4 medewerkers in De Dokter-uniform) i.p.v. een interieurfoto; "Aan de bar" nu de bar met barman + publiek i.p.v. een poserende tray-foto. Beide uit aangeleverd beeldmateriaal (Drive), geoptimaliseerd naar max 1600px + betekenisvolle alt-teksten (issue #6) (@herriaan)
+- Nog open binnen issue #6: een aparte DJ-foto. Geen authentieke DJ-foto in het aangeleverde materiaal; wacht op de klant (@herriaan)
+
 ## v10 - 2026-06-19
 - Lettertypes naar Reetraa-huisstijl: body Open Sans, koppen Bangers (accent Permanent Marker en Caveat behouden) (@herriaan)
 - "Rad van Fortuin" overal vervangen door "Rad" (hero, about, radsectie, alt-tekst) (@herriaan)
