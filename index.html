@@ -690,67 +690,78 @@
         const FRICTION = 0.985;      // deceleration per frame (lower = more friction)
         const MIN_VELOCITY = 0.15;   // stop threshold (degrees/frame)
 
-        // Segments in CLOCKWISE order starting from 12 o'clock on the unrotated wheel image.
-        // Segments have UNEQUAL widths - calibrated from debug overlay screenshot.
+        // 23 segmenten in KLOKWIJZE volgorde vanaf 12 uur op de ongedraaide rad-afbeelding.
+        // Prijzen + grenzen zijn pixel-gemeten uit assets/img/draairad.png
+        // (zie scripts/rad-meten.py) en visueel geverifieerd. De rad heeft 23 segmenten,
+        // met ongelijke breedtes (afwisselend ~18° breed en ~9° smal).
         const prizes = [
             'Dutch Drop 8x',            // 0
-            'Zakje Chips',               // 1
-            'Devilshot 6x',              // 2
-            'Rocketshot 5x',             // 3
-            'Chaudfontaine Blauw 2x',    // 4
-            'Krokodil',                  // 5
-            'Shot naar Keuze 4x',        // 6
-            'Flugel 4x',                // 7
-            'Rocketshot Sour 6x',        // 8
-            'Aptmeister 1x',             // 9
-            'Devilshot 5x',              // 10
-            'Boswandeling Pink 7x',      // 11
-            'Dutch Drop 10x',            // 12
-            'Rocketshot XL',             // 13
-            'Opener De Dokter',          // 14
-            'Rocketshot',                // 15
-            'Rocketshot Pink',           // 16
-            'De Dokter Limoncello',      // 17
-            'Flugel',                    // 18
+            'Zakje Chips',              // 1
+            'Devilshot 6x',             // 2
+            'Rocketshot 5x',            // 3
+            'Chaudfontaine Blauw 2x',   // 4
+            'Krokodil',                 // 5
+            'Shot naar Keuze 4x',       // 6
+            'Flügel 4x',                // 7
+            'Rocketshot Sour 6x',       // 8
+            'Injectie Rocketshot',      // 9
+            'Adtmeister 1x',            // 10
+            'Devilshot 5x',             // 11
+            'Boswandeling Pink 7x',     // 12
+            'Flügel 10x',               // 13
+            'Dutch Drop 4x',            // 14
+            'Opener De Dokter 1x',      // 15
+            'Rocketshot Pink 4x',       // 16
+            'Rocketshot Fles',          // 17
+            'Boswandeling 6x',          // 18
             'Koekie 6x',                // 19
-            'Boswandeling 6x',           // 20
-            'Boswandeling 9x',           // 21
-            'Rocketshot 4x',             // 22
-            'Draai Nog Een Keer!',       // 23
+            'Bodyshot',                 // 20
+            'Boswandeling 8x',          // 21
+            'Draai Nog Een Keer!',      // 22
         ];
-        // The first boundary (between seg 23 and seg 0) sits at ~-10° (=350°) from 12 o'clock.
-        // BOUNDARY_START shifts the coordinate system so 0° = first boundary.
-        // SEGMENT_ENDS[i] = cumulative width from BOUNDARY_START. Last entry = 360.
-        // Calibrated using polar unwrap at 10 radii (50%-95%) + 6 gold anchor lines
-        // (~2°,~66°,~129°,~192°,~254°,~299°) as fixed reference points.
-        const BOUNDARY_START = -10;
-        const SEGMENT_ENDS = [
-        //  cumul  width  actual°
-             12, //  12°   →   2°  Dutch Drop 8x           ★ gold anchor
-             25, //  13°   →  15°  Zakje Chips
-             38, //  13°   →  28°  Devilshot 6x
-             56, //  18°   →  46°  Rocketshot 5x
-             76, //  20°   →  66°  Chaudfontaine Blauw 2x  ★ gold anchor
-             92, //  16°   →  82°  Krokodil
-            107, //  15°   →  97°  Shot naar Keuze 4x
-            123, //  16°   → 113°  Flugel 4x
-            139, //  16°   → 129°  Rocketshot Sour 6x      ★ gold anchor
-            157, //  18°   → 147°  Aptmeister 1x
-            172, //  15°   → 162°  Devilshot 5x
-            189, //  17°   → 179°  Boswandeling Pink 7x
-            202, //  13°   → 192°  Dutch Drop 10x          ★ gold anchor
-            218, //  16°   → 208°  Rocketshot XL
-            233, //  15°   → 223°  Opener De Dokter
-            249, //  16°   → 239°  Rocketshot
-            264, //  15°   → 254°  Rocketshot Pink          ★ gold anchor
-            279, //  15°   → 269°  De Dokter Limoncello
-            294, //  15°   → 284°  Flugel
-            309, //  15°   → 299°  Koekie 6x               ★ gold anchor
-            322, //  13°   → 312°  Boswandeling 6x
-            333, //  11°   → 323°  Boswandeling 9x
-            344, //  11°   → 334°  Rocketshot 4x
-            360, //  16°   → 350°  Draai Nog Een Keer!
+        // SEG_START[i] = starthoek (graden CW vanaf 12 uur) van prijs-segment i op de
+        // ONGEDRAAIDE afbeelding. Einde van segment i = SEG_START[(i+1) % 23] (wrap via 360).
+        // Pixel-gemeten uit draairad.png (middelpunt + straal via alpha-bbox).
+        const SEG_START = [
+            339.25, //  0 Dutch Drop 8x       (net links van de top)
+            357.62, //  1 Zakje Chips         (over de top, smal)
+              6.25, //  2 Devilshot 6x
+             24.50, //  3 Rocketshot 5x
+             42.88, //  4 Chaudfontaine Blauw 2x
+             60.12, //  5 Krokodil            (smal)
+             69.25, //  6 Shot naar Keuze 4x
+             87.88, //  7 Flügel 4x
+            105.25, //  8 Rocketshot Sour 6x
+            124.12, //  9 Injectie Rocketshot (smal)
+            132.38, // 10 Adtmeister 1x       (wekker)
+            150.75, // 11 Devilshot 5x
+            168.75, // 12 Boswandeling Pink 7x
+            186.38, // 13 Flügel 10x          (smal)
+            195.38, // 14 Dutch Drop 4x
+            214.00, // 15 Opener De Dokter 1x
+            231.88, // 16 Rocketshot Pink 4x
+            249.88, // 17 Rocketshot Fles     (smal)
+            258.12, // 18 Boswandeling 6x
+            276.75, // 19 Koekie 6x
+            294.00, // 20 Bodyshot            (smal)
+            303.50, // 21 Boswandeling 8x
+            321.12, // 22 Draai Nog Een Keer!
         ];
+        // Segment (beeldhoek phi, CW vanaf top) waarin phi valt.
+        function segmentAt(phi) {
+            const n = prizes.length;
+            for (let i = 0; i < n; i++) {
+                const s = SEG_START[i], e = SEG_START[(i + 1) % n];
+                if (s < e) { if (phi >= s && phi < e) return i; }
+                else { if (phi >= s || phi < e) return i; } // wrap over 360°
+            }
+            return 0;
+        }
+        // Beeldhoek die momenteel onder de pijl (12 uur) ligt.
+        function pointerImageAngle() {
+            const rawNorm = ((currentAngle % 360) + 360) % 360;
+            return (360 - rawNorm) % 360;
+        }
 
         // Get angle from center of wheel to pointer position
         function getAngleFromCenter(e) {
@@ -846,9 +857,8 @@
 
             // Pointer wobble effect near segment boundaries
             const pointer = document.querySelector('.wheel-pointer');
-            const rawN = ((currentAngle % 360) + 360) % 360;
-            const pPos = ((360 - rawN - BOUNDARY_START + 720) % 360);
-            const nearBoundary = SEGMENT_ENDS.some(b => {
+            const pPos = pointerImageAngle();
+            const nearBoundary = SEG_START.some(b => {
                 const dist = Math.min(Math.abs(pPos - b), 360 - Math.abs(pPos - b));
                 return dist < 3;
             });
@@ -872,20 +882,14 @@
         }
 
         function showPrize() {
-            // After CW rotation of X degrees, the segment at the pointer
-            // was originally at (360 - X) degrees CW from top on the image
-            const rawNorm = ((currentAngle % 360) + 360) % 360;
-            // Shift coordinate system so 0° = first segment boundary
-            const pointerPos = ((360 - rawNorm - BOUNDARY_START + 720) % 360);
-            // Find segment using actual boundary angles (unequal segment widths)
-            let idx = 0;
-            for (let i = 0; i < SEGMENT_ENDS.length; i++) {
-                if (pointerPos < SEGMENT_ENDS[i]) { idx = i; break; }
-            }
+            // De pijl staat vast op 12 uur (beeldhoek 0). Bereken welke beeldhoek daar
+            // nu onder ligt en zoek het bijbehorende segment.
+            const phi = pointerImageAngle();
+            const idx = segmentAt(phi);
             const prize = prizes[idx];
-            const segStart = idx === 0 ? 0 : SEGMENT_ENDS[idx - 1];
-            const segEnd = SEGMENT_ENDS[idx];
-            console.log(`Wheel: rot=${rawNorm.toFixed(1)}° ptr=${pointerPos.toFixed(1)}° → seg[${idx}] ${segStart}°-${segEnd}° = "${prize}"`);
+            const segStart = SEG_START[idx];
+            const segEnd = SEG_START[(idx + 1) % prizes.length];
+            console.log(`Wheel: ptr=${phi.toFixed(1)}° → seg[${idx}] ${segStart}°-${segEnd}° = "${prize}"`);
 
             resultPrize.textContent = '';
             resultCard.classList.add('show');
@@ -1008,29 +1012,29 @@
             const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
             svg.setAttribute('viewBox', '0 0 100 100');
             svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:50;';
-            SEGMENT_ENDS.forEach((endAngle, i) => {
-                const actualAngle = (endAngle + BOUNDARY_START) % 360;
-                const rad = (actualAngle - 90) * Math.PI / 180;
-                const x2 = 50 + 50 * Math.cos(rad);
-                const y2 = 50 + 50 * Math.sin(rad);
+            const n = prizes.length;
+            SEG_START.forEach((startAngle, i) => {
+                // grenslijn op de starthoek (CW vanaf 12 uur)
+                const rad = (startAngle - 90) * Math.PI / 180;
                 const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
                 line.setAttribute('x1', '50'); line.setAttribute('y1', '50');
-                line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+                line.setAttribute('x2', 50 + 50 * Math.cos(rad)); line.setAttribute('y2', 50 + 50 * Math.sin(rad));
                 line.setAttribute('stroke', 'red'); line.setAttribute('stroke-width', '0.5');
                 line.setAttribute('opacity', '0.8');
                 svg.appendChild(line);
-                // Label with prize name
-                const lx = 50 + 38 * Math.cos(rad);
-                const ly = 50 + 38 * Math.sin(rad);
+                // prijs-label op het midden van segment i
+                const e = SEG_START[(i + 1) % n];
+                const mid = (startAngle + ((e - startAngle + 360) % 360) / 2) % 360;
+                const mrad = (mid - 90) * Math.PI / 180;
                 const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                text.setAttribute('x', lx); text.setAttribute('y', ly);
-                text.setAttribute('fill', 'red'); text.setAttribute('font-size', '2');
+                text.setAttribute('x', 50 + 34 * Math.cos(mrad)); text.setAttribute('y', 50 + 34 * Math.sin(mrad));
+                text.setAttribute('fill', 'yellow'); text.setAttribute('font-size', '1.8');
                 text.setAttribute('text-anchor', 'middle'); text.setAttribute('dominant-baseline', 'middle');
-                text.textContent = actualAngle + '°';
+                text.textContent = i + ':' + prizes[i];
                 svg.appendChild(text);
             });
             wheelStage.querySelector('.wheel-img-wrap').appendChild(svg);
-            console.log('Debug overlay active. SEGMENT_ENDS:', SEGMENT_ENDS);
+            console.log('Debug overlay active. SEG_START:', SEG_START);
         }
 
         // ===== ACTIVE NAV =====

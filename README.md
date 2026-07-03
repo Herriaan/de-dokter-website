@@ -36,7 +36,9 @@ python3 -m http.server 8000
 npx serve .
 ```
 
-Debug overlay voor rad-kalibratie: voeg `?debug` toe aan de URL.
+Debug overlay voor rad-kalibratie: voeg `?debug` toe aan de URL (tekent de 23 segmentgrenzen + prijslabels over het rad).
+
+De prijzen en segmentgrenzen van het rad zijn pixel-gemeten uit `assets/img/draairad.png` (23 ongelijke segmenten). Bij een nieuw rad-beeld: draai `python3 scripts/rad-meten.py`, verifieer visueel, en werk `SEG_START` + `prizes` in `index.html` bij.
 
 ## Assets
 
