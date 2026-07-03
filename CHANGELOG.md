@@ -1,5 +1,8 @@
 # Changelog - Feestcafe De Dokter Website
 
+## v12 - 2026-07-03
+- Fotostrip: "Het team" en "Proost!" vervangen door nieuw aangeleverd beeldmateriaal (klant). De oude "Proost"-foto toonde een medewerkster die niet meer in dienst is; nu een proost/rocketshot-foto. Beide met De Dokter-logo, nieuwe bestandsnamen voor cache-busting; alt-tekst "Proost" aangescherpt (@herriaan)
+
 ## v11 - 2026-06-23
 - Fotostrip: "Het team" nu een echte teamfoto (4 medewerkers in De Dokter-uniform) i.p.v. een interieurfoto; "Aan de bar" nu de bar met barman + publiek i.p.v. een poserende tray-foto. Beide uit aangeleverd beeldmateriaal (Drive), geoptimaliseerd naar max 1600px + betekenisvolle alt-teksten (issue #6) (@herriaan)
 - Nog open binnen issue #6: een aparte DJ-foto. Geen authentieke DJ-foto in het aangeleverde materiaal; wacht op de klant (@herriaan)
