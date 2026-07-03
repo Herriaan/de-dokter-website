@@ -1,5 +1,8 @@
 # Changelog - Feestcafe De Dokter Website
 
+## v14 - 2026-07-03
+- Fotostrip: twee kaarten toegevoegd uit aangeleverd klantbeeld (mail 2 jul): "Beste DJ's" (DJ achter de decks) en "De krokodil" (het krokodil-shotspel aan de bar). Rondt issue #6 af (DJ-foto stond nog open) (@herriaan)
+
 ## v13 - 2026-07-03
 - Het Rad: uitkomst klopt nu met waar de pijl wijst. De rad-afbeelding heeft 23 segmenten (niet 24); de oude prijzenlijst had een label te veel én verkeerde labels in de onderste helft, waardoor de uitkomst ~1 segment verschoof en verkeerde prijzen toonde. Alle 23 segmentgrenzen + prijzen zijn pixel-gemeten uit `assets/img/draairad.png` en visueel geverifieerd; pijl-naar-segment-berekening vereenvoudigd (`SEG_START` + `segmentAt`/`pointerImageAngle`). Calibratie-script toegevoegd: `scripts/rad-meten.py` (@herriaan)
 

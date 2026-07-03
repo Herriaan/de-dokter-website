@@ -27,7 +27,7 @@
 
 - [x] Echte teamfoto + bar-foto in fotostrip (issue #6, 23 jun)
 - [x] "Het team" + "Proost" foto's vervangen door klantbeeld (v12, 3 jul)
-- [ ] DJ-foto in fotostrip (issue #6) - klant heeft DJ- en krokodil-foto's aangeleverd (mail 2 jul); nog te plaatsen
+- [x] DJ-foto + krokodil in fotostrip (issue #6) - "Beste DJ's" + "De krokodil" geplaatst uit klantbeeld (v14, 3 jul)
 - [ ] Contact gegevens in footer vervanging door echte data (nu placeholders)
 - [ ] Openingstijden verifieren met klant
 - [ ] Glitch/flicker definitief verifieren met klant
