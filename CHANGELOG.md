@@ -1,5 +1,8 @@
 # Changelog - Feestcafe De Dokter Website
 
+## v13 - 2026-07-03
+- Het Rad: uitkomst klopt nu met waar de pijl wijst. De rad-afbeelding heeft 23 segmenten (niet 24); de oude prijzenlijst had een label te veel én verkeerde labels in de onderste helft, waardoor de uitkomst ~1 segment verschoof en verkeerde prijzen toonde. Alle 23 segmentgrenzen + prijzen zijn pixel-gemeten uit `assets/img/draairad.png` en visueel geverifieerd; pijl-naar-segment-berekening vereenvoudigd (`SEG_START` + `segmentAt`/`pointerImageAngle`). Calibratie-script toegevoegd: `scripts/rad-meten.py` (@herriaan)
+
 ## v12 - 2026-07-03
 - Fotostrip: "Het team" en "Proost!" vervangen door nieuw aangeleverd beeldmateriaal (klant). De oude "Proost"-foto toonde een medewerkster die niet meer in dienst is; nu een proost/rocketshot-foto. Beide met De Dokter-logo, nieuwe bestandsnamen voor cache-busting; alt-tekst "Proost" aangescherpt (@herriaan)
 

@@ -17,15 +17,17 @@
 - [x] Debug overlay (`?debug`) voor rad-kalibratie
 - [x] GitHub Pages deploy (auto bij push naar main)
 - [x] README.md en ROADMAP.md toegevoegd
+- [x] Rad mapping kalibratie - rad heeft 23 segmenten (niet 24); alle grenzen + prijzen pixel-gemeten uit draairad.png en geverifieerd, uitkomst klopt nu met de pijl (v13, 3 jul). Script: `scripts/rad-meten.py`
 
 ## In Progress
 
-- [ ] Rad mapping kalibratie - segmentbreedtes kloppen niet bij 24 ongelijke segmenten. Vereist originele designbestanden of handmatige iteratie met klant.
+- (niets)
 
 ## Next
 
 - [x] Echte teamfoto + bar-foto in fotostrip (issue #6, 23 jun)
-- [ ] DJ-foto in fotostrip (issue #6) - geen authentiek beeld beschikbaar, wacht op klant
+- [x] "Het team" + "Proost" foto's vervangen door klantbeeld (v12, 3 jul)
+- [ ] DJ-foto in fotostrip (issue #6) - klant heeft DJ- en krokodil-foto's aangeleverd (mail 2 jul); nog te plaatsen
 - [ ] Contact gegevens in footer vervanging door echte data (nu placeholders)
 - [ ] Openingstijden verifieren met klant
 - [ ] Glitch/flicker definitief verifieren met klant
