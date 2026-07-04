@@ -8,7 +8,7 @@ One-page website voor Feestcafe De Dokter (Breda), een medisch/dokter-thema fees
 
 - Single-file HTML/CSS/JS (`index.html`, geen framework, geen build step)
 - Alle CSS inline in `<style>`, alle JS inline in `<script>`
-- Google Fonts: Luckiest Guy, DM Sans, Caveat, Permanent Marker
+- Google Fonts: Bangers (koppen), Open Sans (body), Caveat, Permanent Marker, Outfit
 - Hosting: GitHub Pages (auto-deploy bij push naar `main`)
 
 ## Features
