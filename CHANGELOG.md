@@ -1,5 +1,8 @@
 # Changelog - Feestcafe De Dokter Website
 
+## v15 - 2026-07-04
+- Favicon toegevoegd op basis van het logo: `favicon.ico` (16/32/48), `favicon-32.png`, `favicon-192.png` en een `apple-touch-icon.png` (180px, logo op donkere teal-achtergrond) met bijbehorende link-tags in de head (@herriaan)
+
 ## v14 - 2026-07-03
 - Fotostrip: twee kaarten toegevoegd uit aangeleverd klantbeeld (mail 2 jul): "Beste DJ's" (DJ achter de decks) en "De krokodil" (het krokodil-shotspel aan de bar). Rondt issue #6 af (DJ-foto stond nog open) (@herriaan)
 
