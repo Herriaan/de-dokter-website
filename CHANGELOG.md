@@ -1,6 +1,7 @@
 # Changelog - Feestcafe De Dokter Website
 
 ## v15 - 2026-07-04
+- `.nojekyll` toegevoegd: schakelt de legacy Jekyll-build van GitHub Pages uit (pure statische site); de Pages-build faalde herhaaldelijk op de favicon-commit met een generieke "Page build failed" (@herriaan)
 - Favicon toegevoegd op basis van het logo: `favicon.ico` (16/32/48), `favicon-32.png`, `favicon-192.png` en een `apple-touch-icon.png` (180px, logo op donkere teal-achtergrond) met bijbehorende link-tags in de head (@herriaan)
 
 ## v14 - 2026-07-03
