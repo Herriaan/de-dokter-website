@@ -18,6 +18,8 @@
 - [x] GitHub Pages deploy (auto bij push naar main)
 - [x] README.md en ROADMAP.md toegevoegd
 - [x] Rad mapping kalibratie - rad heeft 23 segmenten (niet 24); alle grenzen + prijzen pixel-gemeten uit draairad.png en geverifieerd, uitkomst klopt nu met de pijl (v13, 3 jul). Script: `scripts/rad-meten.py`
+- [x] Fotoronde 2 jul verwerkt: team/proost vervangen, dj- en krokodilfoto toegevoegd; originelen in `assets/aanlevering-2026-07-02/` (v12/v14, 3 jul)
+- [x] Favicon: mascotte-hoofd als tab-icoon + apple-touch-icon; `.nojekyll` toegevoegd na falende Pages-build (v15/v16, 4 jul)
 
 ## In Progress
 
