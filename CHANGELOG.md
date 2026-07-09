@@ -1,5 +1,8 @@
 # Changelog - Feestcafe De Dokter Website
 
+## v17 - 2026-07-09
+- Fotostrip: DJ-foto ("Beste DJ's") vervangen op verzoek van de klant (mail Lois 9 jul) — de vorige dj was niet gewenst. Nieuwe aangeleverde foto (`DJSIL1.jpg`) als `assets/img/foto-dj.jpg`; origineel bewaard in `assets/aanlevering-2026-07-09/` (@herriaan)
+
 ## v16 - 2026-07-04
 - Favicon gewisseld van het logo naar de mascotte (hoofd-crop van de cartoon-dokter); `?v=2` cache-bust op de icon-links (@herriaan)
 
