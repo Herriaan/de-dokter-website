@@ -30,7 +30,11 @@
 - [x] Echte teamfoto + bar-foto in fotostrip (issue #6, 23 jun)
 - [x] "Het team" + "Proost" foto's vervangen door klantbeeld (v12, 3 jul)
 - [x] DJ-foto + krokodil in fotostrip (issue #6) - "Beste DJ's" + "De krokodil" geplaatst uit klantbeeld (v14, 3 jul)
-- [ ] Contact gegevens in footer vervanging door echte data (nu placeholders)
+- [x] Contact gegevens in footer vervanging door echte data (nu placeholders) — live site
+  (feestcafededokter.nl, WordPress, niet deze GitHub Pages-repo) gecorrigeerd 25 aug 2026:
+  mailadres info@cafededokter.nl → info@feestcafededokter.nl, telefoon 06-23855950 bevestigd
+  correct door de klant (geen placeholder, geen wijziging nodig). Deze repo's eigen
+  `index.html` bevat geen contactgegevens en is niet de live bron.
 - [ ] Openingstijden verifieren met klant
 - [ ] Glitch/flicker definitief verifieren met klant
 - [ ] Custom domein koppelen (indien gewenst)

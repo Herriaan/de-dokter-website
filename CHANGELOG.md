@@ -1,5 +1,11 @@
 # Changelog - Feestcafe De Dokter Website
 
+## v18 - 2026-08-25
+- Roadmap-regel "Contact gegevens in footer" afgevinkt: live footer op feestcafededokter.nl
+  (WordPress, buiten deze repo) mailadres gecorrigeerd naar info@feestcafededokter.nl; telefoon
+  bevestigd correct door de klant. Geen wijziging in deze repo, want de live site draait niet
+  op deze GitHub Pages-build. (@herriaan)
+
 ## v17 - 2026-07-09
 - Fotostrip: DJ-foto ("Beste DJ's") vervangen op verzoek van de klant (mail Lois 9 jul) — de vorige dj was niet gewenst. Nieuwe aangeleverde foto (`DJSIL1.jpg`) als `assets/img/foto-dj.jpg`; origineel bewaard in `assets/aanlevering-2026-07-09/` (@herriaan)
 
